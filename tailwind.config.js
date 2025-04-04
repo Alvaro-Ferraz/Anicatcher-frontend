@@ -8,6 +8,7 @@ export default {
           sidebar: "#171D22",
           body: "#171D25",
           utils: "#25272D",
+          utilsText: "#4D4E53",
         },
       },
     },

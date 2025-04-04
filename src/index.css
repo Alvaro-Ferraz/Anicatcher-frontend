@@ -3,3 +3,14 @@
 @tailwind utilities;
 
 
+/* Tornar a scrollbar invisível */
+.sidebar::-webkit-scrollbar {
+    display: none; /* Para navegadores baseados em WebKit */
+  }
+  
+  .sidebar {
+    -ms-overflow-style: none; /* Para Internet Explorer e Edge */
+    scrollbar-width: none; /* Para Firefox */
+  }
+
+
