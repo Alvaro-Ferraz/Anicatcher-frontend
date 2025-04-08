@@ -23,7 +23,7 @@ export const Home = () => {
       {/* Layout Principal */}
       <div className="flex pt-[68px]"> {/* Adicionado padding-top para evitar sobreposição com o header */}
         {/* Sidebar - Ajustada para começar abaixo do header */}
-        <div className="w-[20%] bg-sidebar p-4 fixed h-[calc(100vh-68px)] top-[68px] left-0 overflow-y-auto sidebar">
+        <div className="w-[20%] bg-sidebar p-5 fixed h-[calc(100vh-68px)] top-[68px] left-0 overflow-y-auto sidebar">
           {/* Área superior (pode ser um logo ou título) */}
           <div className="w-full h-12 bg-[#1F2937] mb-5 rounded"></div>
 
@@ -38,11 +38,11 @@ export const Home = () => {
             <input
               type="text"
               placeholder="Buscar por nome"
-              className="bg-utils border text-utilsText pl-10 pr-3 py-2 rounded w-full text-sm placeholder-gray-400 focus:outline-none"
+              className="bg-utils  text-utilsText pl-10 pr-3 py-2 rounded w-full text-sm placeholder-gray-400 focus:outline-none"
             />
           </div>
 
-          <div className="w-full bg-utils p-4 rounded">
+          <div className="w-full bg-utils p-5 rounded">
             {/* Seção de Favoritos */}
             <h2 className="text-lg font-medium text-white mb-4">Meus Favoritos</h2>
 
@@ -89,14 +89,30 @@ export const Home = () => {
             {/* Seção Últimos Lançamentos */}
             <section>
               <h2 className="text-2xl font-bold mb-6 text-red-400">Últimos Lançamentos</h2>
-              <div className="grid grid-cols-5 gap-8">
+              <div className="grid grid-cols-5 gap-6">
                 {[...Array(15)].map((_, i) => (
-                  <div key={i} className="bg-gray-600 rounded-lg overflow-hidden shadow-md">
-                    <img
-                      src="https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx176496-9BDMjAZGEbq4.png"
-                      alt={`Último Lançamento ${i + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                    />
+                  <div
+                    key={i}
+                    className="relative rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 group"
+                  >
+                    {/* Imagem do anime */}
+                    <a
+                      href={`/anime/${i + 1}`}
+                      className="rounded-md shadow-lg cursor-pointer inline-block h-[265px] overflow-hidden relative w-full"
+                    >
+                      <img
+                        src="https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx189796-cVlT7CY7n8pd.jpg"
+                        alt={`Último Lançamento ${i + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ease-in-out"
+                      />
+                    </a>
+                    {/* Título do anime */}
+                    <a
+                      href="/anime/21/ONE-PIECE/"
+                      className="text-gray-500 font-sans text-1xl font-bold leading-[21px] mt-2 overflow-hidden transition-colors duration-200 ease-in-out line-clamp-2"
+                    >
+                      Naruto
+                    </a>
                   </div>
                 ))}
               </div>
