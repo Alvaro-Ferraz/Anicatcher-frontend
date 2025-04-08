@@ -7,8 +7,8 @@ export default {
         sans: ['Overpass'], // Corrigido de "Ovespass" para "Overpass"
       },
       colors: {
-        sidebar: "#171D22",
-        body: "#171D25",
+        sidebar: "#1e1e24",
+        body: "#111827",
         utils: "#25272D",
         utilsText: "#4D4E53",
       },
