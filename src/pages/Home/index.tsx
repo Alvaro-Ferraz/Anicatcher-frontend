@@ -1,5 +1,6 @@
 import logo from '../../images/Logo-ani.3.png';
 import avatar from '../../images/avatar.png';
+import TemporadaAtual from '../../components/anime-season';
 
 export const Home = () => {
   return (
@@ -39,7 +40,7 @@ export const Home = () => {
       <div className="flex pt-[68px]">
         {/* Sidebar - Fixed on the left */}
         <div className="w-[250px] bg-sidebar p-5 fixed h-[calc(100vh-68px)] border-r border-gray-700 top-[68px] left-0 overflow-y-auto">
-          <div className="w-full h-12 bg-[#2e79e2] mt-5 mb-5 rounded"></div>
+          <TemporadaAtual />
           <div className="relative mb-6">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <svg
