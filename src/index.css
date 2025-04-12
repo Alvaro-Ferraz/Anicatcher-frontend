@@ -22,3 +22,18 @@ body {
   scrollbar-width: none;
   /* Para Firefox */
 }
+
+/* Efeito de shimmer para o skeleton loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

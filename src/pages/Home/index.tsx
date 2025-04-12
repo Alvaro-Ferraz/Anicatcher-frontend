@@ -1,42 +1,87 @@
 import logo from '../../images/Logo-ani.3.png';
 import avatar from '../../images/avatar.png';
 import TemporadaAtual from '../../components/anime-season/anime-season';
-import AnimeGenres from '../../components/anime-genres-filter/anime-genres-filter'; 
+import AnimeGenres from '../../components/anime-genres-filter/anime-genres-filter';
+import AnimeCardGrid from '../../components/anime-card-grid/anime-card-grid';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export const Home = () => {
-  const [genres, setGenres] = useState([]); // Estado para armazenar gêneros
+// Função para adicionar um atraso (delay) entre requisições
+const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  // Função para buscar gêneros da API
+export const Home = () => {
+  const [genres, setGenres] = useState([]);
+  const [seasonAnimes, setSeasonAnimes] = useState([]);
+  const [nextSeason, setNextSeason] = useState([]);
+  const [filteredAnimes, setFilteredAnimes] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState('Todos'); // Estado para armazenar a categoria selecionada
+  const [isLoadingSeason, setIsLoadingSeason] = useState(true);
+  const [isLoadingNextSeason, setIsLoadingNextSeason] = useState(true);
+  const [isLoadingFiltered, setIsLoadingFiltered] = useState(true);
+
   useEffect(() => {
-    axios
-      .get('https://api.jikan.moe/v4/genres/anime')
-      .then((response) => {
-        setGenres(response.data.data); // A API retorna os gêneros em response.data.data
-      })
-      .catch((error) => {
-        console.error('Erro ao buscar gêneros:', error);
-      });
+    const fetchData = async () => {
+      try {
+        // Buscar animes da temporada atual
+        setIsLoadingSeason(true);
+        const seasonResponse = await axios.get('https://api.jikan.moe/v4/seasons/now');
+        setSeasonAnimes(seasonResponse.data.data);
+        setFilteredAnimes(seasonResponse.data.data);
+        setIsLoadingSeason(false);
+        setIsLoadingFiltered(false);
+
+        await delay(500);
+
+        // Buscar animes da próxima temporada
+        setIsLoadingNextSeason(true);
+        const nextSeasonResponse = await axios.get('https://api.jikan.moe/v4/seasons/upcoming');
+        setNextSeason(nextSeasonResponse.data.data);
+        setIsLoadingNextSeason(false);
+
+        await delay(500);
+
+        // Buscar gêneros
+        const genresResponse = await axios.get('https://api.jikan.moe/v4/genres/anime');
+        setGenres(genresResponse.data.data);
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        setIsLoadingSeason(false);
+        setIsLoadingNextSeason(false);
+        setIsLoadingFiltered(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // Função para lidar com a seleção de gênero
-  const handleGenreSelect = (genre: { name: any; }) => {
-    console.log('Gênero selecionado:', genre.name);
-    // Aqui você pode adicionar a lógica para filtrar os animes com base no gênero
+  const handleGenreSelect = (genre: { mal_id: any; name: string }) => {
+    if (!genre) {
+      setFilteredAnimes(seasonAnimes);
+      setSelectedGenre('Todos');
+      setIsLoadingFiltered(false);
+      return;
+    }
+
+    setIsLoadingFiltered(true);
+    setSelectedGenre(genre.name);
+    axios
+      .get(`https://api.jikan.moe/v4/anime?genres=${genre.mal_id}`)
+      .then((response) => {
+        setFilteredAnimes(response.data.data);
+        setIsLoadingFiltered(false);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar animes filtrados:', error);
+        setIsLoadingFiltered(false);
+      });
   };
 
   return (
     <div className="bg-body min-h-screen text-white">
-      {/* Header - Fixed at the top */}
+      {/* Header */}
       <header className="flex justify-between items-center p-4 bg-sidebar border-b border-gray-700 fixed top-0 left-0 w-full z-10">
-        {/* Logo e Links à esquerda */}
         <div className="flex items-center space-x-6">
-          <img
-            src={logo}
-            alt="Logo"
-            className="w-[60px] h-[60px] rounded-full"
-          />
+          <img src={logo} alt="Logo" className="w-[60px] h-[60px] rounded-full" />
           <div className="flex space-x-6">
             <a href="#" className="text-sm text-white hover:text-gray-300">Home</a>
             <a href="#" className="text-sm text-white hover:text-gray-300">Animelist</a>
@@ -44,8 +89,6 @@ export const Home = () => {
             <a href="#" className="text-sm text-white hover:text-gray-300">Yomashiro</a>
           </div>
         </div>
-
-        {/* Barra de Pesquisa e Avatar à direita */}
         <div className="flex mr-10 items-center space-x-4">
           <input
             type="text"
@@ -66,7 +109,7 @@ export const Home = () => {
 
       {/* Layout Principal */}
       <div className="flex pt-[68px]">
-        {/* Sidebar - Fixed on the left */}
+        {/* Sidebar */}
         <div className="w-[250px] bg-sidebar p-5 fixed h-[calc(100vh-68px)] border-r border-gray-700 top-[68px] left-0 overflow-y-auto">
           <TemporadaAtual />
           <div className="relative mb-6">
@@ -136,70 +179,42 @@ export const Home = () => {
               ))}
             </div>
 
-            {/* Seção Últimos Lançamentos */}
-            <section>
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-red-400">Últimos Lançamentos</h2>
-                <a href="#" className="text-sm text-blue-400">View All</a>
-              </div>
-              <div className="grid grid-cols-5 gap-8">
-                {[...Array(15)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="relative overflow-hidden transition-transform duration-300 hover:scale-105"
-                  >
-                    <a
-                      href={`/anime/${i + 1}`}
-                      className="block w-full aspect-[3/4] overflow-hidden"
-                    >
-                      <img
-                        src="https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx189796-cVlT7CY7n8pd.jpg"
-                        alt={`Último Lançamento ${i + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </a>
-                    <a
-                      href={`/anime/${i + 1}`}
-                      className="block mt-2 text-[#8BA0B2] font-sans text-lg font-bold leading-[21px] overflow-hidden breack-words"
-                    >
-                      Naruto shippuden konoha
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </section>
+            {/* Seção Popular this season */}
+            <AnimeCardGrid
+              title="Popular this season"
+              animes={seasonAnimes}
+              columns={5}
+              rows={2}
+              showViewAll={true}
+              viewAllLink="#"
+              isLoading={isLoadingSeason}
+            />
+            <div className="mt-10"></div>
+            {/* Seção Upcoming next season */}
+            <AnimeCardGrid
+              title="Upcoming next season"
+              animes={nextSeason}
+              columns={5}
+              rows={1}
+              showViewAll={true}
+              viewAllLink="#"
+              isLoading={isLoadingNextSeason}
+            />
 
-            {/* Seção Ação */}
+            {/* Seção Filtrada por Gênero */}
             <section className="mt-10">
               <div className="flex justify-between items-center mb-5">
                 <AnimeGenres genres={genres} onGenreSelect={handleGenreSelect} />
-                <a href="#" className="text-sm text-blue-400">View All</a>
               </div>
-              <div className="grid grid-cols-6 gap-4">
-                {[...Array(12)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="relative overflow-hidden transition-transform duration-300 hover:scale-105"
-                  >
-                    <a
-                      href={`/anime/${i + 1}`}
-                      className="block w-full aspect-[3/4] overflow-hidden"
-                    >
-                      <img
-                        src="https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx189796-cVlT7CY7n8pd.jpg"
-                        alt={`Último Lançamento ${i + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </a>
-                    <a
-                      href={`/anime/${i + 1}`}
-                      className="block mt-2 text-[#8BA0B2] font-sans text-lg font-bold leading-[21px] overflow-hidden breack-words"
-                    >
-                      Naruto shippuden konoha
-                    </a>
-                  </div>
-                ))}
-              </div>
+              <AnimeCardGrid
+                title={selectedGenre}
+                animes={filteredAnimes}
+                columns={6}
+                rows={2}
+                showViewAll={true}
+                viewAllLink="#"
+                isLoading={isLoadingFiltered}
+              />
             </section>
           </main>
         </div>
