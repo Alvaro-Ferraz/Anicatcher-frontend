@@ -1,17 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
-  /** @type {import('tailwindcss').Config} */
-    theme: {
-      extend: {
-        colors: {
-          sidebar: "#171D22",
-          body: "#171D25",
-          utils: "#25272D",
-        },
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Overpass'], // Corrigido de "Ovespass" para "Overpass"
+      },
+      colors: {
+        sidebar: "#1e1e24",
+        body: "#111827",
+        utils: "#25272D",
+        utilsText: "#4D4E53",
       },
     },
-    plugins: [],
-  };
-
-
+  },
+  plugins: [],
+};
