@@ -1,37 +1,65 @@
 import logo from '../../images/Logo-ani.3.png';
 import avatar from '../../images/avatar.png';
-import TemporadaAtual from '../../components/anime-season';
+import TemporadaAtual from '../../components/anime-season/anime-season';
+import AnimeGenres from '../../components/anime-genres-filter/anime-genres-filter'; 
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export const Home = () => {
+  const [genres, setGenres] = useState([]); // Estado para armazenar gêneros
+
+  // Função para buscar gêneros da API
+  useEffect(() => {
+    axios
+      .get('https://api.jikan.moe/v4/genres/anime')
+      .then((response) => {
+        setGenres(response.data.data); // A API retorna os gêneros em response.data.data
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar gêneros:', error);
+      });
+  }, []);
+
+  // Função para lidar com a seleção de gênero
+  const handleGenreSelect = (genre: { name: any; }) => {
+    console.log('Gênero selecionado:', genre.name);
+    // Aqui você pode adicionar a lógica para filtrar os animes com base no gênero
+  };
+
   return (
     <div className="bg-body min-h-screen text-white">
       {/* Header - Fixed at the top */}
       <header className="flex justify-between items-center p-4 bg-sidebar border-b border-gray-700 fixed top-0 left-0 w-full z-10">
-        <div className="flex items-center">
+        {/* Logo e Links à esquerda */}
+        <div className="flex items-center space-x-6">
           <img
             src={logo}
             alt="Logo"
             className="w-[60px] h-[60px] rounded-full"
           />
-          <div className="flex justify-center items-center space-x-6 ml-4">
+          <div className="flex space-x-6">
             <a href="#" className="text-sm text-white hover:text-gray-300">Home</a>
             <a href="#" className="text-sm text-white hover:text-gray-300">Animelist</a>
             <a href="#" className="text-sm text-white hover:text-gray-300">Comunidade</a>
             <a href="#" className="text-sm text-white hover:text-gray-300">Yomashiro</a>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+
+        {/* Barra de Pesquisa e Avatar à direita */}
+        <div className="flex mr-10 items-center space-x-4">
           <input
             type="text"
             placeholder="Buscar por nome"
-            className="bg-utils border text-utilsText border-gray-600 px-2 py-1 rounded"
+            className="bg-utils border text-white color-red border-gray-600 px-2 py-1 rounded"
           />
           <div>
-            <img
-              src={avatar}
-              alt="Logo"
-              className="w-[40px] h-[40px] bg-size-cover rounded-[3px]"
-            />
+            <a href="">
+              <img
+                src={avatar}
+                alt="Avatar"
+                className="w-[40px] h-[40px] bg-size-cover rounded-[3px]"
+              />
+            </a>
           </div>
         </div>
       </header>
@@ -62,7 +90,7 @@ export const Home = () => {
             <input
               type="text"
               placeholder="Buscar por nome"
-              className="bg-utils text-utilsText pl-10 pr-3 py-2 rounded w-full text-sm placeholder-gray-400 focus:outline-none"
+              className="bg-utils text-red-400 pl-10 pr-3 py-2 rounded w-full text-sm placeholder-gray-400 focus:outline-none"
             />
           </div>
           <div className="w-full bg-utils p-5 rounded">
@@ -100,7 +128,7 @@ export const Home = () => {
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="rounded-lg overflow-hidden shadow-lg">
                   <img
-                    src={"https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx176496-9BDMjAZGEbq4.png"}
+                    src={'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx176496-9BDMjAZGEbq4.png'}
                     alt={`Imagem ${i + 1}`}
                     className="w-full h-[250px] transition-transform duration-300 hover:scale-105"
                   />
@@ -112,9 +140,9 @@ export const Home = () => {
             <section>
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-red-400">Últimos Lançamentos</h2>
-                <a href="#" className="text-sm text-[#748899] hover:text-blue-400">View All</a>
+                <a href="#" className="text-sm text-blue-400">View All</a>
               </div>
-              <div className="grid grid-cols-5 gap-6">
+              <div className="grid grid-cols-5 gap-8">
                 {[...Array(15)].map((_, i) => (
                   <div
                     key={i}
@@ -132,9 +160,9 @@ export const Home = () => {
                     </a>
                     <a
                       href={`/anime/${i + 1}`}
-                      className="block mt-2 text-[#8BA0B2] font-sans text-lg font-bold leading-[21px] overflow-hidden"
+                      className="block mt-2 text-[#8BA0B2] font-sans text-lg font-bold leading-[21px] overflow-hidden breack-words"
                     >
-                      Naruto
+                      Naruto shippuden konoha
                     </a>
                   </div>
                 ))}
@@ -143,13 +171,33 @@ export const Home = () => {
 
             {/* Seção Ação */}
             <section className="mt-10">
-              <div className="flex justify-between items-center mb-3">
-                <input type="" />
-                <a href="#" className="text-sm text-[#748899] hover:text-blue-400">View All</a>
+              <div className="flex justify-between items-center mb-5">
+                <AnimeGenres genres={genres} onGenreSelect={handleGenreSelect} />
+                <a href="#" className="text-sm text-blue-400">View All</a>
               </div>
               <div className="grid grid-cols-6 gap-4">
                 {[...Array(12)].map((_, i) => (
-                  <div key={i} className="bg-gray-600 rounded-lg shadow-md w-full h-[200px] object-cover"></div>
+                  <div
+                    key={i}
+                    className="relative overflow-hidden transition-transform duration-300 hover:scale-105"
+                  >
+                    <a
+                      href={`/anime/${i + 1}`}
+                      className="block w-full aspect-[3/4] overflow-hidden"
+                    >
+                      <img
+                        src="https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx189796-cVlT7CY7n8pd.jpg"
+                        alt={`Último Lançamento ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </a>
+                    <a
+                      href={`/anime/${i + 1}`}
+                      className="block mt-2 text-[#8BA0B2] font-sans text-lg font-bold leading-[21px] overflow-hidden breack-words"
+                    >
+                      Naruto shippuden konoha
+                    </a>
+                  </div>
                 ))}
               </div>
             </section>

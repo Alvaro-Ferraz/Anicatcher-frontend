@@ -4,7 +4,7 @@
 const getTemporadaAtual = () => {
   const hoje = new Date();
   const ano = hoje.getFullYear();
-  const mes = hoje.getMonth() + 1; // Janeiro é 0, então somamos 1
+  const mes = hoje.getMonth() + 1;
 
   if (mes >= 1 && mes <= 3) {
     return { nome: "Inverno", ano };
