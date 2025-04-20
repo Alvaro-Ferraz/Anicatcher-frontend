@@ -6,55 +6,127 @@ import AnimeCardGrid from '../../components/anime-card-grid/anime-card-grid';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// Função para adicionar um atraso (delay) entre requisições
+
 const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Funções para caching no localStorage
+const getCachedData = (key: string, expirationMinutes: number) => {
+  const cached = localStorage.getItem(key);
+  if (!cached) return null;
+
+  const { data, timestamp } = JSON.parse(cached);
+  const isExpired = Date.now() - timestamp > expirationMinutes * 60 * 1000;
+  if (isExpired) {
+    localStorage.removeItem(key);
+    return null;
+  }
+  return data;
+};
+
+const setCachedData = (key: string, data: any) => {
+  localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+};
+
 export const Home = () => {
-  const [genres, setGenres] = useState([]);
-  const [seasonAnimes, setSeasonAnimes] = useState([]);
-  const [nextSeason, setNextSeason] = useState([]);
-  const [filteredAnimes, setFilteredAnimes] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState('Todos'); // Estado para armazenar a categoria selecionada
+  const [genres, setGenres] = useState<any[]>([]);
+  const [seasonAnimes, setSeasonAnimes] = useState<any[]>([]);
+  const [nextSeason, setNextSeason] = useState<any[]>([]);
+  const [filteredAnimes, setFilteredAnimes] = useState<any[]>([]);
+  const [popularAnimes, setPopularAnimes] = useState<any[]>([]);
+  const [selectedGenre, setSelectedGenre] = useState('Todos');
   const [isLoadingSeason, setIsLoadingSeason] = useState(true);
   const [isLoadingNextSeason, setIsLoadingNextSeason] = useState(true);
   const [isLoadingFiltered, setIsLoadingFiltered] = useState(true);
+  const [isLoadingPopular, setIsLoadingPopular] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Buscar animes da temporada atual
+        // Buscar animes da temporada atual (com caching)
         setIsLoadingSeason(true);
-        const seasonResponse = await axios.get('https://api.jikan.moe/v4/seasons/now');
-        setSeasonAnimes(seasonResponse.data.data);
-        setFilteredAnimes(seasonResponse.data.data);
+        setIsLoadingPopular(true);
+
+        let seasonData = getCachedData('seasonAnimes', 60); // Cache por 1 hora
+        if (!seasonData) {
+          const seasonResponse = await axios.get('https://api.jikan.moe/v4/seasons/now', { timeout: 5000 });
+          seasonData = seasonResponse.data.data;
+          setCachedData('seasonAnimes', seasonData);
+        }
+        setSeasonAnimes(seasonData);
+        setFilteredAnimes(seasonData);
+
+        // Ordenar por 'members' e selecionar os 4 mais populares
+        const sortedByPopularity = [...seasonData].sort((a: any, b: any) => b.members - a.members).slice(0, 4);
+        setPopularAnimes(sortedByPopularity);
+
         setIsLoadingSeason(false);
         setIsLoadingFiltered(false);
+        setIsLoadingPopular(false);
 
-        await delay(500);
+        await delay(1000); // Aumentado para 1 segundo
 
-        // Buscar animes da próxima temporada
+        // Buscar animes da próxima temporada (com caching)
         setIsLoadingNextSeason(true);
-        const nextSeasonResponse = await axios.get('https://api.jikan.moe/v4/seasons/upcoming');
-        setNextSeason(nextSeasonResponse.data.data);
+        let nextSeasonData = getCachedData('nextSeason', 60);
+        if (!nextSeasonData) {
+          const nextSeasonResponse = await axios.get('https://api.jikan.moe/v4/seasons/upcoming', { timeout: 5000 });
+          nextSeasonData = nextSeasonResponse.data.data;
+          setCachedData('nextSeason', nextSeasonData);
+        }
+        setNextSeason(nextSeasonData);
         setIsLoadingNextSeason(false);
 
-        await delay(500);
+        await delay(1000);
 
-        // Buscar gêneros
-        const genresResponse = await axios.get('https://api.jikan.moe/v4/genres/anime');
-        setGenres(genresResponse.data.data);
-      } catch (error) {
+        // Buscar gêneros (com caching)
+        let genresData = getCachedData('genres', 60);
+        if (!genresData) {
+          const genresResponse = await axios.get('https://api.jikan.moe/v4/genres/anime', { timeout: 5000 });
+          genresData = genresResponse.data.data;
+          setCachedData('genres', genresData);
+        }
+        setGenres(genresData);
+      } catch (error: any) {
         console.error('Erro ao buscar dados:', error);
+
+        // Se for erro de rate limiting (429), tentar novamente após um delay maior
+        if (error.response?.status === 429) {
+          console.log('Rate limit atingido, tentando novamente em 5 segundos...');
+          await delay(5000);
+          fetchData(); // Tenta novamente
+          return;
+        }
+
+        // Fallback para dados em cache, se disponíveis
+        const cachedSeason = getCachedData('seasonAnimes', 60);
+        if (cachedSeason) {
+          setSeasonAnimes(cachedSeason);
+          setFilteredAnimes(cachedSeason);
+          const sortedByPopularity = [...cachedSeason].sort((a: any, b: any) => b.members - a.members).slice(0, 4);
+          setPopularAnimes(sortedByPopularity);
+        }
+
+        const cachedNextSeason = getCachedData('nextSeason', 60);
+        if (cachedNextSeason) {
+          setNextSeason(cachedNextSeason);
+        }
+
+        const cachedGenres = getCachedData('genres', 60);
+        if (cachedGenres) {
+          setGenres(cachedGenres);
+        }
+
         setIsLoadingSeason(false);
         setIsLoadingNextSeason(false);
         setIsLoadingFiltered(false);
+        setIsLoadingPopular(false);
       }
     };
 
     fetchData();
   }, []);
 
-  const handleGenreSelect = (genre: { mal_id: any; name: string }) => {
+  const handleGenreSelect = async (genre: { mal_id: any; name: string }) => {
     if (!genre) {
       setFilteredAnimes(seasonAnimes);
       setSelectedGenre('Todos');
@@ -64,16 +136,33 @@ export const Home = () => {
 
     setIsLoadingFiltered(true);
     setSelectedGenre(genre.name);
-    axios
-      .get(`https://api.jikan.moe/v4/anime?genres=${genre.mal_id}`)
-      .then((response) => {
-        setFilteredAnimes(response.data.data);
-        setIsLoadingFiltered(false);
-      })
-      .catch((error) => {
-        console.error('Erro ao buscar animes filtrados:', error);
-        setIsLoadingFiltered(false);
-      });
+    try {
+      const cacheKey = `filteredAnimes_${genre.mal_id}`;
+      let filteredData = getCachedData(cacheKey, 60);
+      if (!filteredData) {
+        const response = await axios.get(`https://api.jikan.moe/v4/anime?genres=${genre.mal_id}`, { timeout: 5000 });
+        filteredData = response.data.data;
+        setCachedData(cacheKey, filteredData);
+      }
+      setFilteredAnimes(filteredData);
+      setIsLoadingFiltered(false);
+    } catch (error: any) {
+      console.error('Erro ao buscar animes filtrados:', error);
+
+      if (error.response?.status === 429) {
+        console.log('Rate limit atingido na filtragem, tentando novamente em 5 segundos...');
+        await delay(5000);
+        handleGenreSelect(genre); // Tenta novamente
+        return;
+      }
+
+      const cacheKey = `filteredAnimes_${genre.mal_id}`;
+      const cachedFiltered = getCachedData(cacheKey, 60);
+      if (cachedFiltered) {
+        setFilteredAnimes(cachedFiltered);
+      }
+      setIsLoadingFiltered(false);
+    }
   };
 
   return (
@@ -85,14 +174,14 @@ export const Home = () => {
           <div className="flex space-x-6">
             <a href="#" className="text-sm text-white hover:text-gray-300">Home</a>
             <a href="#" className="text-sm text-white hover:text-gray-300">Animelist</a>
-            <a href="#" className="text-sm text-white hover:text-gray-300">Comunidade</a>
+            <a href="#" className="text-sm text-white hover:text-gray-300">Comunity</a>
             <a href="#" className="text-sm text-white hover:text-gray-300">Yomashiro</a>
           </div>
         </div>
         <div className="flex mr-10 items-center space-x-4">
           <input
             type="text"
-            placeholder="Buscar por nome"
+            placeholder="Search for name..."
             className="bg-utils border text-white color-red border-gray-600 px-2 py-1 rounded"
           />
           <div>
@@ -132,12 +221,12 @@ export const Home = () => {
             </div>
             <input
               type="text"
-              placeholder="Buscar por nome"
+              placeholder="Search for name..."
               className="bg-utils text-red-400 pl-10 pr-3 py-2 rounded w-full text-sm placeholder-gray-400 focus:outline-none"
             />
           </div>
           <div className="w-full bg-utils p-5 rounded">
-            <h2 className="text-lg font-medium text-white mb-4">Meus Favoritos</h2>
+            <h2 className="text-lg font-medium text-white mb-4">My favorites</h2>
             <div className="space-y-4">
               <div className="flex items-start space-x-3 group cursor-pointer hover:bg-[#2D3748] p-1 rounded transition-colors">
                 <img
@@ -168,15 +257,25 @@ export const Home = () => {
           <main className="max-w-[1200px] mx-auto">
             {/* Hero Banner */}
             <div className="grid grid-cols-4 gap-6 mt-10 mb-10">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="rounded-lg overflow-hidden shadow-lg">
-                  <img
-                    src={'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx176496-9BDMjAZGEbq4.png'}
-                    alt={`Imagem ${i + 1}`}
-                    className="w-full h-[250px] transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-              ))}
+              {isLoadingPopular ? (
+                [...Array(4)].map((_, i) => (
+                  <div key={i} className="rounded-lg overflow-hidden shadow-lg animate-pulse">
+                    <div className="w-full h-[250px] bg-gray-700"></div>
+                  </div>
+                ))
+              ) : popularAnimes.length > 0 ? (
+                popularAnimes.map((anime: any, i: number) => (
+                  <div key={i} className="rounded-lg overflow-hidden shadow-lg">
+                    <img
+                      src={anime.images?.jpg?.large_image_url || 'https://via.placeholder.com/300x250'}
+                      alt={anime.title || `Anime ${i + 1}`}
+                      className="w-full h-[250px] object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-4 text-center text-gray-400">Dados indisponíveis no momento.</div>
+              )}
             </div>
 
             {/* Seção Popular this season */}

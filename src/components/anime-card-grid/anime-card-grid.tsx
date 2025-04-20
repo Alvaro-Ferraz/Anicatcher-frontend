@@ -45,7 +45,7 @@ const AnimeCardGrid: React.FC<{
   return (
     <section>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold text-[#ADC0D2]">{title}</h2>
+        <h2 className="text-2xl font-bold text-[#ADC0D2]">{title}</h2>
         {showViewAll && (
           <a href={viewAllLink} className="text-sm text-blue-400">
             View All
@@ -104,7 +104,7 @@ const AnimeCardGrid: React.FC<{
                   </a>
                   <a
                     href={`/anime/${anime.mal_id}`}
-                    className="block mt-2 text-[#8BA0B2] font-sans text-lg font-bold leading-[21px] overflow-hidden break-words"
+                    className="block mt-2 text-[#8BA0B2] font-sans text-1xl font-semibold leading-[21px] overflow-hidden break-words"
                   >
                     {anime.title}
                   </a>

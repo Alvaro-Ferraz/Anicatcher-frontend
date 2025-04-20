@@ -7,13 +7,13 @@ const getTemporadaAtual = () => {
   const mes = hoje.getMonth() + 1;
 
   if (mes >= 1 && mes <= 3) {
-    return { nome: "Inverno", ano };
+    return { nome: "Winter", ano };
   } else if (mes >= 4 && mes <= 6) {
-    return { nome: "Primavera", ano };
+    return { nome: "spring", ano };
   } else if (mes >= 7 && mes <= 9) {
-    return { nome: "Verão", ano };
+    return { nome: "Summer", ano };
   } else {
-    return { nome: "Outono", ano };
+    return { nome: "Fall", ano };
   }
 };
 
