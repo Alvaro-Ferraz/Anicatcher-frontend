@@ -155,7 +155,7 @@ export const Home = () => {
         <AnimeCardGrid
           title={selectedGenre}
           animes={filteredAnimes}
-          columns={6}
+          columns={5}
           rows={2}
           showViewAll={true}
           viewAllLink="#"
