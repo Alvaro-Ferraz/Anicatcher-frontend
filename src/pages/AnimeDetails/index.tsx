@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Anime } from './interface'; // Ajuste o caminho conforme necessário
+import { Anime } from './interface'; 
 import Layout from '../../components/layout/index';
 
 const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -10,16 +10,26 @@ const AnimeDetails = () => {
   const { id } = useParams();
 
   const [anime, setAnime] = useState<Anime | null>(null);
+  const [characters, setCharacters] = useState<any[]>([]);
+  const [staff, setStaff] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAnimeDetails = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`https://api.jikan.moe/v4/anime/${id}`, { timeout: 5000 });
-        setAnime(response.data.data);
+        const [animeRes, charactersRes, staffRes] = await Promise.all([
+          axios.get(`https://api.jikan.moe/v4/anime/${id}`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/characters`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`, { timeout: 5000 })
+        ]);
+
+        setAnime(animeRes.data.data);
+        setCharacters(charactersRes.data.data);
+        setStaff(staffRes.data.data); // Corrigido aqui para usar os dados de staff
+
         setIsLoading(false);
       } catch (err: any) {
         console.error('Erro ao buscar detalhes do anime:', err);
@@ -139,13 +149,13 @@ const AnimeDetails = () => {
 
           {/* Título e Sinopse */}
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-white mb-2">{anime.title}</h1>
-            <p className="text-sm text-gray-400 mb-4">
+            <h1 className="text-3xl font-medium text-gray-200 mb-2">{anime.title}</h1>
+            <p className="text-sm text-gray-500 mb-4">
               {anime.year || 'Ano desconhecido'} •{' '}
               {anime.genres?.map((g: any) => g.name).join(', ') || 'Gêneros desconhecidos'} •{' '}
               {anime.episodes || 'N/A'} episódios
             </p>
-            <p className="text-gray-300">{anime.synopsis || 'Sinopse não disponível.'}</p>
+            <p className="text-gray-400 hover:text-gray-300">{anime.synopsis || 'Sinopse não disponível.'}</p>
           </div>
         </div>
 
@@ -210,8 +220,87 @@ const AnimeDetails = () => {
 
           {/* Espaço à Direita (para conteúdo futuro das abas) */}
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-white mb-4">Detalhes</h2>
-            {/* Conteúdo adicional pode ser adicionado aqui conforme a aba selecionada */}
+            {/* Sessão de Relações */}
+            {/* Seção de Personagens */}
+            <div className="flex-1 p-5">
+              <h2 className="text-xl font-semibold text-white mb-4">Characters</h2>
+              <div className="grid grid-cols-3 gap-4">
+                {characters.slice(0, 6).map((char) => (
+                  <div
+                    key={char.character.mal_id}
+                    className="bg-[#1e2a3a] flex h-[80px] overflow-hidden"
+                  >
+                    {/* Imagem do personagem - alinhada à esquerda */}
+                    <div className="w-[64px] h-full">
+                      <img
+                        src={char.character.images?.jpg?.image_url}
+                        alt={char.character.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Nome e papel do personagem */}
+                    <div className="flex-1 flex flex-col justify-between px-2 py-2 text-sm text-white">
+                      <p className="font-semibold text-gray-300 text-[13px] leading-tight">
+                        {char.character.name}
+                      </p>
+                      <p className="text-gray-400 text-[11px]">{char.role}</p>
+                    </div>
+
+                    {/* Seiyuu - imagem à direita e info à esquerda dela */}
+                    {char.voice_actors?.length > 0 && (
+                      <div className="flex h-full">
+                        <div className="flex flex-col justify-between text-right pr-2 py-2 min-h-full">
+                          <p className="text-gray-300 text-[13px] leading-tight">
+                            {char.voice_actors[0].person.name}
+                          </p>
+                          <p className="text-gray-400 text-[11px]">
+                            {char.voice_actors[0].language}
+                          </p>
+                        </div>
+                        <div className="w-[64px] h-full">
+                          <img
+                            src={char.voice_actors[0].person.images.jpg.image_url}
+                            alt={char.voice_actors[0].person.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Staff Section */}
+              <h2 className="text-white text-xl font-semibold mb-4 mt-8">Staff</h2>
+              <div className="grid grid-cols-3 gap-4">
+                {staff.slice(0, 3).map((member) => (
+                  <div
+                    key={member.person.mal_id}
+                    className="bg-[#1e2a3a] flex h-[80px] overflow-hidden"
+                  >
+                    {/* Imagem do Staff à esquerda */}
+                    <div className="w-[64px] h-full">
+                      <img
+                        src={member.person.images?.jpg?.image_url}
+                        alt={member.person.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Nome e posição */}
+                    <div className="flex-1 flex flex-col justify-between px-2 py-2 text-sm text-white">
+                      <p className="font-semibold text-gray-300 text-[13px] leading-tight">
+                        {member.person.name}
+                      </p>
+                      <p className="text-gray-400 text-[11px]">
+                        {member.positions.join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
