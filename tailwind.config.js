@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Overpass'], // Corrigido de "Ovespass" para "Overpass"
+        sans: ['Overpass'],
       },
       colors: {
         sidebar: "#1e1e24",

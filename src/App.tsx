@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
+import AnimeDetails from "./pages/AnimeDetails"; // Importe a nova página
 
 export const App = () => {
     const router = createBrowserRouter([
@@ -7,9 +8,13 @@ export const App = () => {
             path: '/',
             element: <Home />
         },
+        {
+            path: '/anime/:id', // Nova rota com parâmetro mal_id
+            element: <AnimeDetails />
+        },
     ]);
 
     return <RouterProvider router={router} />;
 };
 
-export default App; 
+export default App;

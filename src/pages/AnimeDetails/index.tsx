@@ -1,0 +1,369 @@
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { Anime, Episode, Trailer } from './interface';
+import Layout from '../../components/layout/index';
+import AnimeStatistics from "../../components/AnimeStatistics/AnimeStatistics";
+import AnimeRecommendations from '../../components/AnimeRecommendations/AnimeRecommendations';
+
+const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const AnimeDetails = () => {
+  const { id } = useParams();
+
+  const [anime, setAnime] = useState<Anime | null>(null);
+  const [characters, setCharacters] = useState<any[]>([]);
+  const [staff, setStaff] = useState<any[]>([]);
+  const [videos, setVideos] = useState<Episode[]>([]);
+  const [trailer, setTrailer] = useState<Trailer | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [recommendations, setRecommendations] = useState([]);
+
+  useEffect(() => {
+    const fetchAnimeDetails = async () => {
+      try {
+        setIsLoading(true);
+
+        const [animeRes, charactersRes, staffRes, videosRes, recommendationsRes] = await Promise.all([
+          axios.get(`https://api.jikan.moe/v4/anime/${id}`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/characters`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/videos`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/recommendations`, { timeout: 5000 }),
+        ]);
+
+        const animeData = animeRes.data.data;
+        const videosData = videosRes.data.data;
+
+        setAnime(animeData);
+        setCharacters(charactersRes.data.data);
+        setStaff(staffRes.data.data);
+        setVideos(videosData.episodes || []);
+        setTrailer(animeData.trailer || null);
+        setRecommendations(recommendationsRes.data.data); // novo estado
+
+        setIsLoading(false);
+      } catch (err: any) {
+        console.error('Erro ao buscar detalhes do anime:', err);
+        if (err.response?.status === 429) {
+          console.log('Rate limit atingido, tentando novamente em 5 segundos...');
+          await delay(5000);
+          fetchAnimeDetails();
+          return;
+        }
+        setError('Não foi possível carregar os detalhes do anime.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchAnimeDetails();
+  }, [id]);
+
+
+  const handleFavoriteToggle = () => {
+    setIsFavorite(!isFavorite);
+    // Aqui você pode adicionar lógica para salvar o estado de favorito no backend ou localStorage
+  };
+
+  const handleAddToList = () => {
+    // Lógica para adicionar à lista (pode ser um modal ou integração com backend)
+    alert('Anime adicionado à sua lista!');
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Desconhecido';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const formatSeason = () => {
+    if (!anime?.season || !anime.year) return 'Desconhecido';
+    return `${anime.season.charAt(0).toUpperCase() + anime.season.slice(1)} ${anime.year}`;
+  };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="text-center text-gray-400 mt-10">Carregando...</div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="text-center text-red-400 mt-10">{error}</div>
+      </Layout>
+    );
+  }
+
+  if (!anime) {
+    return (
+      <Layout>
+        <div className="text-center text-gray-400 mt-10">Anime não encontrado.</div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="mt-10">
+        {/* Primeira Parte: Imagem, Título, Sinopse e Abas */}
+        <div className="mt-6 flex gap-6">
+          {/* Imagem de Capa */}
+          <div className="flex-shrink-0">
+            <img
+              src={anime.images?.jpg?.large_image_url || 'https://via.placeholder.com/200x300'}
+              alt={anime.title}
+              className="w-[250px] h-[370px]"
+            />
+            {/* Botões */}
+            <div className="mt-4 flex gap-4">
+              <button
+                onClick={handleAddToList}
+                className="flex items-center w-full gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                <span className='flex-1 justify-center'>Add to List</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 5v14" />
+                  <path d="M5 12h14" />
+                </svg>
+              </button>
+              <button
+                onClick={handleFavoriteToggle}
+                className="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill={isFavorite ? 'red' : 'none'}
+                  stroke={isFavorite ? 'red' : 'currentColor'}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Título e Sinopse */}
+          <div className="flex-1">
+            <h1 className="text-3xl font-medium text-gray-200 mb-2">{anime.title}</h1>
+            <p className="text-sm text-gray-500 mb-4">
+              {anime.year || 'Ano desconhecido'} •{' '}
+              {anime.genres?.map((g: any) => g.name).join(', ') || 'Gêneros desconhecidos'} •{' '}
+              {anime.episodes || 'N/A'} episódios
+            </p>
+            <p className="text-gray-400 hover:text-gray-300">{anime.synopsis || 'Sinopse não disponível.'}</p>
+          </div>
+        </div>
+
+        {/* Abas de Navegação */}
+        <div className="mt-6 border-b border-gray-700">
+          <div className="flex gap-8 border-gray-700 justify-center">
+            <a href="#" className="pb-2 text-white border-b-2 border-blue-500">
+              Overview
+            </a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white">
+              Watch
+            </a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white">
+              Characters
+            </a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white">
+              Staff
+            </a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white">
+              Reviews
+            </a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white">
+              Stats
+            </a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white">
+              Social
+            </a>
+          </div>
+        </div>
+
+        {/* Seção de Informações Abaixo */}
+        <div className="mt-6 flex gap-6">
+          {/* Coluna de Informações à Esquerda */}
+          <div className="w-[240px] text-gray-400 bg-[#151F2E] p-5">
+            {/* Informações do Anime */}
+            {[
+              { label: 'Formato', value: anime.type },
+              { label: 'Episódios', value: anime.episodes },
+              { label: 'Duração do Episódio', value: anime.duration },
+              { label: 'Status', value: anime.status },
+              { label: 'Data de Início', value: formatDate(anime.aired?.from) },
+              { label: 'Data de Fim', value: formatDate(anime.aired?.to) },
+              { label: 'Temporada', value: formatSeason() },
+              { label: 'Nota Média', value: anime.score ? `${Math.round(anime.score * 10)}%` : 'N/A' },
+              { label: 'Popularidade', value: anime.popularity },
+              { label: 'Favoritos', value: anime.favorites },
+              { label: 'Estúdios', value: anime.studios?.map((s) => s.name).join(', ') },
+              { label: 'Produtores', value: anime.producers?.map((p) => p.name).join(', ') },
+              { label: 'Fonte', value: anime.source },
+              { label: 'Gêneros', value: anime.genres?.map((g) => g.name).join(', ') },
+              { label: 'Romaji', value: anime.title },
+              { label: 'Inglês', value: anime.title_english },
+              { label: 'Nativo', value: anime.title_japanese },
+              { label: 'Sinônimos', value: anime.title_synonyms?.join(', ') },
+            ].map(({ label, value }) => (
+              <div className="mb-3" key={label}>
+                <p className="text-[14px] font-bold text-[#9FADBD]">{label}</p>
+                <p className="text-[13px]">{value || 'Desconhecido'}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Espaço à Direita (para conteúdo futuro das abas) */}
+          <div className="flex-1">            {/* Seção de Personagens */}
+            <div className="flex-1 p-5">
+              <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Characters</h2>
+              <div className="grid grid-cols-3 gap-4">
+                {characters.slice(0, 6).map((char) => (
+                  <div
+                    key={char.character.mal_id}
+                    className="bg-[#1e2a3a] flex h-[80px] overflow-hidden"
+                  >
+                    {/* Imagem do personagem - alinhada à esquerda */}
+                    <div className="w-[64px] h-full">
+                      <img
+                        src={char.character.images?.jpg?.image_url}
+                        alt={char.character.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Nome e papel do personagem */}
+                    <div className="flex-1 flex flex-col justify-between text-left pl-2 py-2 min-h-full">
+                      <p className="font-semibold text-gray-300 text-[13px] leading-tight">
+                        {char.character.name}
+                      </p>
+                      <p className="text-gray-400 text-[11px]">{char.role}</p>
+                    </div>
+
+                    {/* Seiyuu - imagem à direita e info à esquerda dela */}
+                    {char.voice_actors?.length > 0 && (
+                      <div className="flex h-full">
+                        <div className="flex flex-col justify-between text-right pr-2 py-2 min-h-full">
+                          <p className="text-gray-300 text-[13px] leading-tight">
+                            {char.voice_actors[0].person.name}
+                          </p>
+                          <p className="text-gray-400 text-[11px]">
+                            {char.voice_actors[0].language}
+                          </p>
+                        </div>
+                        <div className="w-[64px] h-full">
+                          <img
+                            src={char.voice_actors[0].person.images.jpg.image_url}
+                            alt={char.voice_actors[0].person.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Staff Section */}
+              <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2 mt-4">Staff</h2>
+              <div className="grid grid-cols-3 gap-4">
+                {staff.slice(0, 3).map((member) => (
+                  <div
+                    key={member.person.mal_id}
+                    className="bg-[#1e2a3a] flex h-[80px] overflow-hidden"
+                  >
+                    {/* Imagem do Staff à esquerda */}
+                    <div className="w-[64px] h-full">
+                      <img
+                        src={member.person.images?.jpg?.image_url}
+                        alt={member.person.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Nome e posição */}
+                    <div className="flex-1 flex flex-col justify-between px-2 py-2 text-sm text-white">
+                      <p className="font-semibold text-gray-300 text-[13px] leading-tight">
+                        {member.person.name}
+                      </p>
+                      <p className="text-gray-400 text-[11px]">
+                        {member.positions.join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {videos && videos.length > 0 && (
+                <div className="mt-8">
+                  <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Watch</h2>
+                  <div className="flex gap-4 flex-wrap">
+                    {videos.slice(-4).map((video) => (
+                      <a
+                        key={video.url}
+                        href={video.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative w-[200px] h-[100px] rounded overflow-hidden group"
+                      >
+                        <img
+                          src={video.images?.jpg?.image_url}
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {/* Overlay escuro fixo atrás do texto */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-2 py-1">
+                          <p className="text-[12px] font-medium text-[#c4d9ec] truncate">
+                            {video.episode} - {video.title}
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {trailer && trailer.embed_url && (
+                <div className="mt-8">
+                  <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Trailer</h2>
+                  <div className="relative w-full max-w-[350px] aspect-video rounded overflow-hidden group">
+                    <iframe
+                      className="w-full h-full"
+                      src={trailer.embed_url}
+                      title="Trailer do Anime"
+                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+              {id && <AnimeStatistics id={Number(id)} />}
+              {recommendations.length > 0 && (
+                <AnimeRecommendations recommendations={recommendations} />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout >
+  );
+};
+
+export default AnimeDetails;
