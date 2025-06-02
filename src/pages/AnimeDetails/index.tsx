@@ -206,25 +206,26 @@ const AnimeDetails = () => {
           {/* Coluna de Informações à Esquerda */}
           <div className="w-[240px] text-gray-400 bg-[#151F2E] p-5">
             {/* Informações do Anime */}
+            {/*Colocar ranking*/}
             {[
-              { label: 'Formato', value: anime.type },
-              { label: 'Episódios', value: anime.episodes },
-              { label: 'Duração do Episódio', value: anime.duration },
+              { label: 'Format', value: anime.type },
+              { label: 'Episodes', value: anime.episodes },
+              { label: 'Episode Duration', value: anime.duration },
               { label: 'Status', value: anime.status },
-              { label: 'Data de Início', value: formatDate(anime.aired?.from) },
-              { label: 'Data de Fim', value: formatDate(anime.aired?.to) },
-              { label: 'Temporada', value: formatSeason() },
-              { label: 'Nota Média', value: anime.score ? `${Math.round(anime.score * 10)}%` : 'N/A' },
-              { label: 'Popularidade', value: anime.popularity },
-              { label: 'Favoritos', value: anime.favorites },
-              { label: 'Estúdios', value: anime.studios?.map((s) => s.name).join(', ') },
-              { label: 'Produtores', value: anime.producers?.map((p) => p.name).join(', ') },
-              { label: 'Fonte', value: anime.source },
-              { label: 'Gêneros', value: anime.genres?.map((g) => g.name).join(', ') },
+              { label: 'Start Date', value: formatDate(anime.aired?.from) },
+              { label: 'End date', value: formatDate(anime.aired?.to) },
+              { label: 'Season', value: formatSeason() },
+              { label: 'Score', value: anime.score ? `${Math.round(anime.score * 10)}%` : 'N/A' },
+              { label: 'Popularity', value: anime.popularity },
+              { label: 'Favorites', value: anime.favorites },
+              { label: 'Studios', value: anime.studios?.map((s) => s.name).join(', ') },
+              { label: 'Producers', value: anime.producers?.map((p) => p.name).join(', ') },
+              { label: 'Source', value: anime.source },
+              { label: 'Genres', value: anime.genres?.map((g) => g.name).join(', ') },
               { label: 'Romaji', value: anime.title },
-              { label: 'Inglês', value: anime.title_english },
-              { label: 'Nativo', value: anime.title_japanese },
-              { label: 'Sinônimos', value: anime.title_synonyms?.join(', ') },
+              { label: 'English', value: anime.title_english },
+              { label: 'Native', value: anime.title_japanese },
+              { label: 'Synonyms', value: anime.title_synonyms?.join(', ') },
             ].map(({ label, value }) => (
               <div className="mb-3" key={label}>
                 <p className="text-[14px] font-bold text-[#9FADBD]">{label}</p>
