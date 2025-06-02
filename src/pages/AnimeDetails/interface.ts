@@ -17,6 +17,7 @@ export interface Anime {
     year?: number;
     genres?: { name: string }[];
     episodes?: number;
+    episodes_detail?: Episode[]; // ← Adicionado aqui
     synopsis?: string;
     type?: string;
     duration?: string;
@@ -47,4 +48,28 @@ export interface Anime {
     studios?: { name: string }[];
     producers?: { name: string }[];
     source?: string;
+}
+export interface Episode {
+    mal_id: number;
+    title: string;
+    episode: string;
+    url: string;
+    images: {
+        jpg: {
+            image_url: string;
+        };
+    };
+}
+
+export interface Trailer {
+  youtube_id: string;
+  url: string;
+  embed_url: string;
+  images: {
+    image_url: string;
+    small_image_url: string;
+    medium_image_url: string;
+    large_image_url: string;
+    maximum_image_url: string;
+  };
 }

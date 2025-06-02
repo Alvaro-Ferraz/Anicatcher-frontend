@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Anime } from './interface'; 
+import { Anime, Episode, Trailer } from './interface';
 import Layout from '../../components/layout/index';
+import AnimeStatistics from "../../components/AnimeStatistics/AnimeStatistics";
+import AnimeRecommendations from '../../components/AnimeRecommendations/AnimeRecommendations';
 
 const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -12,23 +14,35 @@ const AnimeDetails = () => {
   const [anime, setAnime] = useState<Anime | null>(null);
   const [characters, setCharacters] = useState<any[]>([]);
   const [staff, setStaff] = useState<any[]>([]);
+  const [videos, setVideos] = useState<Episode[]>([]);
+  const [trailer, setTrailer] = useState<Trailer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
     const fetchAnimeDetails = async () => {
       try {
         setIsLoading(true);
-        const [animeRes, charactersRes, staffRes] = await Promise.all([
+
+        const [animeRes, charactersRes, staffRes, videosRes, recommendationsRes] = await Promise.all([
           axios.get(`https://api.jikan.moe/v4/anime/${id}`, { timeout: 5000 }),
           axios.get(`https://api.jikan.moe/v4/anime/${id}/characters`, { timeout: 5000 }),
-          axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`, { timeout: 5000 })
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/videos`, { timeout: 5000 }),
+          axios.get(`https://api.jikan.moe/v4/anime/${id}/recommendations`, { timeout: 5000 }),
         ]);
 
-        setAnime(animeRes.data.data);
+        const animeData = animeRes.data.data;
+        const videosData = videosRes.data.data;
+
+        setAnime(animeData);
         setCharacters(charactersRes.data.data);
-        setStaff(staffRes.data.data); // Corrigido aqui para usar os dados de staff
+        setStaff(staffRes.data.data);
+        setVideos(videosData.episodes || []);
+        setTrailer(animeData.trailer || null);
+        setRecommendations(recommendationsRes.data.data); // novo estado
 
         setIsLoading(false);
       } catch (err: any) {
@@ -46,6 +60,7 @@ const AnimeDetails = () => {
 
     fetchAnimeDetails();
   }, [id]);
+
 
   const handleFavoriteToggle = () => {
     setIsFavorite(!isFavorite);
@@ -219,11 +234,9 @@ const AnimeDetails = () => {
           </div>
 
           {/* Espaço à Direita (para conteúdo futuro das abas) */}
-          <div className="flex-1">
-            {/* Sessão de Relações */}
-            {/* Seção de Personagens */}
+          <div className="flex-1">            {/* Seção de Personagens */}
             <div className="flex-1 p-5">
-              <h2 className="text-xl font-semibold text-white mb-4">Characters</h2>
+              <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Characters</h2>
               <div className="grid grid-cols-3 gap-4">
                 {characters.slice(0, 6).map((char) => (
                   <div
@@ -240,7 +253,7 @@ const AnimeDetails = () => {
                     </div>
 
                     {/* Nome e papel do personagem */}
-                    <div className="flex-1 flex flex-col justify-between px-2 py-2 text-sm text-white">
+                    <div className="flex-1 flex flex-col justify-between text-left pl-2 py-2 min-h-full">
                       <p className="font-semibold text-gray-300 text-[13px] leading-tight">
                         {char.character.name}
                       </p>
@@ -271,7 +284,7 @@ const AnimeDetails = () => {
                 ))}
               </div>
               {/* Staff Section */}
-              <h2 className="text-white text-xl font-semibold mb-4 mt-8">Staff</h2>
+              <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2 mt-4">Staff</h2>
               <div className="grid grid-cols-3 gap-4">
                 {staff.slice(0, 3).map((member) => (
                   <div
@@ -299,12 +312,57 @@ const AnimeDetails = () => {
                   </div>
                 ))}
               </div>
+              {videos && videos.length > 0 && (
+                <div className="mt-8">
+                  <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Watch</h2>
+                  <div className="flex gap-4 flex-wrap">
+                    {videos.slice(-4).map((video) => (
+                      <a
+                        key={video.url}
+                        href={video.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative w-[200px] h-[100px] rounded overflow-hidden group"
+                      >
+                        <img
+                          src={video.images?.jpg?.image_url}
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {/* Overlay escuro fixo atrás do texto */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-2 py-1">
+                          <p className="text-[12px] font-medium text-[#c4d9ec] truncate">
+                            {video.episode} - {video.title}
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {trailer && trailer.embed_url && (
+                <div className="mt-8">
+                  <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Trailer</h2>
+                  <div className="relative w-full max-w-[350px] aspect-video rounded overflow-hidden group">
+                    <iframe
+                      className="w-full h-full"
+                      src={trailer.embed_url}
+                      title="Trailer do Anime"
+                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+              {id && <AnimeStatistics id={Number(id)} />}
+              {recommendations.length > 0 && (
+                <AnimeRecommendations recommendations={recommendations} />
+              )}
             </div>
-
           </div>
         </div>
       </div>
-    </Layout>
+    </Layout >
   );
 };
 
