@@ -1,7 +1,7 @@
 import logo from '../../assets/images/Logo-ani.3.png';
 import avatar from '../../assets/images/avatar.png';
 import TemporadaAtual from '../../components/anime-season/anime-season';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ReactNode } from 'react';
 
 const Layout = ({ children }: { children: ReactNode }) => {
