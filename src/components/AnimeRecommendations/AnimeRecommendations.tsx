@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect } from "react"
 
 interface Recommendation {
   entry: {
@@ -23,64 +22,60 @@ interface Props {
 
 export default function AnimeRecommendations({ recommendations }: Props) {
   const [showAll, setShowAll] = useState(false)
+  const columns = 6
+  const rows = 1
+  const initialCards = rows * columns
 
-  const displayedRecommendations = showAll ? recommendations : recommendations.slice(0, 7)
+  const displayedRecommendations = showAll ? recommendations : recommendations.slice(0, initialCards)
+
+  // Forçar atualização do grid ao redimensionar a tela
+  useEffect(() => {
+    const handleResize = () => {
+      setTimeout(() => { }, 0);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <div className="mt-10">
+    <section className="mt-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-[13px] font-bold text-[#ADC0D2]">Recommendations</h2>
-        {recommendations.length > 7 && (
+        <h2 className="text-2xl font-medium text-[#ADC0D2]">Recommendations</h2>
+        {recommendations.length > initialCards && (
           <button
             onClick={() => setShowAll(!showAll)}
-            className="text-[13px] text-[#ADC0D2] transition-colors hover:underline"
+            className="text-sm text-blue-400 hover:underline"
           >
-            {showAll ? "View Less" : "View All Recommendations"}
+            {showAll ? "View Less" : "View All"}
           </button>
         )}
       </div>
 
-      <motion.div
-        key={showAll ? "grid" : "carousel"}
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: "auto" }}
-        exit={{ opacity: 0, height: 0 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
-        className={`overflow-hidden`}
-      >
-        <div
-          className={`${
-            showAll
-              ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4"
-              : "flex gap-4 overflow-x-auto pb-2"
-          }`}
-        >
-          <AnimatePresence mode="popLayout">
-            {displayedRecommendations.map((rec) => (
-              <motion.a
-                key={rec.entry.mal_id}
-                href={`/anime/${rec.entry.mal_id}`}
-                className="flex-shrink-0 w-28 group"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="relative overflow-hidden transition-transform duration-300 hover:scale-105">
-                  <img
-                    src={rec.entry.images?.webp?.large_image_url || "/placeholder.svg?height=128&width=96"}
-                    alt={rec.entry.title}
-                    className="w-full h-36 object-cover rounded"
-                  />
-                </div>
-                <p className="mt-2 text-[#ADC0D2] text-xs font-medium line-clamp-2 leading-tight">
-                  {rec.entry.title}
-                </p>
-              </motion.a>
-            ))}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    </div>
+      <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 relative z-0 ${showAll ? 'auto-rows-auto' : ''}`}>
+        {displayedRecommendations.map((rec) => (
+          <div
+            key={rec.entry.mal_id}
+            className="relative overflow-hidden transition-transform duration-300 hover:scale-105 z-0"
+          >
+            <a
+              href={`/anime/${rec.entry.mal_id}`}
+              className="block w-full aspect-[3/4] overflow-hidden rounded"
+            >
+              <img
+                src={rec.entry.images?.webp?.large_image_url || 'https://via.placeholder.com/150'}
+                alt={rec.entry.title}
+                className="w-full h-full object-cover"
+              />
+            </a>
+            <a
+              href={`/anime/${rec.entry.mal_id}`}
+              className="block mt-2 text-[#8BA0B2] font-sans text-1xl font-semibold leading-[21px] overflow-hidden break-words"
+            >
+              {rec.entry.title}
+            </a>
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }

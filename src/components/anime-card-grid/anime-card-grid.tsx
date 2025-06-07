@@ -27,38 +27,38 @@ const AnimeCardGrid: React.FC<{
   viewAllLink = '#',
   isLoading = false,
 }) => {
-  const totalCards = rows * columns;
-  const displayedAnimes = animes.slice(0, totalCards);
+    const totalCards = rows * columns;
+    const displayedAnimes = animes.slice(0, totalCards);
 
-  // Mapeamento de colunas para classes Tailwind responsivas
-  const responsiveGridClass =
-    'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4';
+    // Mapeamento de colunas para classes Tailwind responsivas
+    const responsiveGridClass =
+      'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4';
 
-  // Forçar atualização do grid ao redimensionar a tela
-  // Isso resolve o bug de responsividade só atualizar ao abrir o menu
-  React.useEffect(() => {
-    const handleResize = () => {
-      // Força um re-render
-      setTimeout(() => {}, 0);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    // Forçar atualização do grid ao redimensionar a tela
+    // Isso resolve o bug de responsividade só atualizar ao abrir o menu
+    React.useEffect(() => {
+      const handleResize = () => {
+        // Força um re-render
+        setTimeout(() => { }, 0);
+      };
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
-  return (
-    <section>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-medium text-[#ADC0D2]">{title}</h2>
-        {showViewAll && (
-          <a href={viewAllLink} className="text-sm text-blue-400">
-            View All
-          </a>
-        )}
-      </div>
+    return (
+      <section>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-medium text-[#ADC0D2]">{title}</h2>
+          {showViewAll && (
+            <a href={viewAllLink} className="text-sm text-blue-400">
+              View All
+            </a>
+          )}
+        </div>
 
-      <div className={responsiveGridClass + " relative z-0"}>
-        {isLoading
-          ? // Renderizar skeleton loading
+        <div className={responsiveGridClass + " relative z-0"}>
+          {isLoading
+            ? // Renderizar skeleton loading
             [...Array(totalCards)].map((_, index) => (
               <div
                 key={`skeleton-${index}`}
@@ -72,7 +72,7 @@ const AnimeCardGrid: React.FC<{
                 </div>
               </div>
             ))
-          : // Renderizar os cards reais, preenchendo com placeholders se necessário
+            : // Renderizar os cards reais, preenchendo com placeholders se necessário
             [...Array(totalCards)].map((_, index) => {
               const anime = displayedAnimes[index];
               if (!anime) {
@@ -114,9 +114,9 @@ const AnimeCardGrid: React.FC<{
                 </div>
               );
             })}
-      </div>
-    </section>
-  );
-};
+        </div>
+      </section>
+    );
+  };
 
 export default AnimeCardGrid;

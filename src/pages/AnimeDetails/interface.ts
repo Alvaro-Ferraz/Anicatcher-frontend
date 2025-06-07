@@ -73,3 +73,18 @@ export interface Trailer {
     maximum_image_url: string;
   };
 }
+
+
+export interface Recommendation {
+  entry: {
+    mal_id: number
+    title: string
+    images?: {
+      webp?: {
+        large_image_url?: string
+      }
+    }
+    url: string
+  }
+  votes: number
+}
