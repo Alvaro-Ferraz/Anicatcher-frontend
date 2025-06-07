@@ -1,15 +1,9 @@
-"use client"
-
 import { useState } from "react"
 import type { ReactNode } from "react"
-
 import logo from '../../assets/images/Logo-ani.3.png';
 import avatar from '../../assets/images/avatar.png';
-
-// Import these from your assets
 import TemporadaAtual from '../../components/anime-season/anime-season';
 
-// Mock component - replace with your actual component
 const ClientLayout = ({ children }: { children: ReactNode }) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -287,16 +281,12 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
 
         {/* Conteúdo principal ocupa toda a tela no mobile */}
         <div
-          className={`flex-1 p-6 transition-all duration-500 ease-in-out ${
-            // Em mobile (sm:hidden) não tem margem
-            // Em desktop, margem baseada no estado da sidebar
-            isSidebarExpanded ? "sm:ml-[280px]" : "sm:ml-[90px]"
-          }`}
+          className="flex-1 p-6 transition-all duration-500 ease-in-out ml-0 sm:ml-[90px] sm:data-[expanded=true]:ml-[280px]"
+          data-expanded={isSidebarExpanded}
         >
           <main
-            className={`w-full mx-auto transition-all duration-500 ease-in-out ${
-              isSidebarExpanded ? "max-w-[1200px]" : "max-w-[1600px]"
-            }`}
+            className="w-full mx-auto transition-all duration-500 ease-in-out max-w-[1400px] sm:data-[expanded=true]:max-w-[1200px]"
+            data-expanded={isSidebarExpanded}
           >
             {children}
           </main>
