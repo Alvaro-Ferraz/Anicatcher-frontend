@@ -1,53 +1,102 @@
+"use client"
+
+import { useState } from "react"
+import type { ReactNode } from "react"
+
 import logo from '../../assets/images/Logo-ani.3.png';
 import avatar from '../../assets/images/avatar.png';
-import TemporadaAtual from '../../components/anime-season/anime-season';
-import { useState } from 'react';
-import { ReactNode } from 'react';
 
-const Layout = ({ children }: { children: ReactNode }) => {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+// Import these from your assets
+import TemporadaAtual from '../../components/anime-season/anime-season';
+
+// Mock component - replace with your actual component
+const ClientLayout = ({ children }: { children: ReactNode }) => {
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
-  };
+    setIsSidebarExpanded(!isSidebarExpanded)
+  }
 
-  const sidebarWidth = isSidebarExpanded ? '250px' : '60px';
-  const mainMarginLeft = isSidebarExpanded ? '280px' : '90px';
+  const sidebarWidth = isSidebarExpanded ? "250px" : "60px"
+
   return (
     <div className="bg-body min-h-screen text-white">
       {/* Header */}
       <header className="flex justify-between items-center p-4 bg-sidebar border-b border-gray-700 fixed top-0 left-0 w-full z-10">
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-3 sm:space-x-6 flex-1 min-w-0">
           <button
-            className="sm:hidden text-white focus:outline-none ml-2"
+            className="sm:hidden text-white focus:outline-none ml-2 flex-shrink-0"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-7 w-7"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <img src={logo} alt="Logo" className="w-[60px] h-[60px] rounded-full" />
 
-          <div className="flex space-x-6">
-            <a href="/" className="text-sm text-white hover:text-gray-300 ">Home</a>
-            <a href="#" className="text-sm text-white hover:text-gray-300 line-through">Animelist</a>
-            <a href="#" className="text-sm text-white hover:text-gray-300 line-through">Comunity</a>
-            <a href="#" className="text-sm text-white hover:text-gray-300 line-through">Perfil</a>
+          <img
+            src={logo || "/placeholder.svg"}
+            alt="Logo"
+            className="w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] rounded-full flex-shrink-0"
+          />
+
+          {/* Navigation - Hidden on mobile, visible on larger screens */}
+          <div className="hidden md:flex space-x-4 lg:space-x-6 min-w-0">
+            <a href="/" className="text-sm text-white hover:text-gray-300 whitespace-nowrap">
+              Home
+            </a>
+            <a href="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
+              Animelist
+            </a>
+            <a href="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
+              Comunity
+            </a>
+            <a href="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
+              Perfil
+            </a>
           </div>
         </div>
-        <div className="flex mr-10 items-center space-x-4">
+
+        {/* Right side - Search and Avatar */}
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+          {/* Search - Hidden on very small screens, visible on sm+ */}
           <input
             type="text"
-            placeholder="Search for name..."
-            className="bg-utils border text-white color-red border-gray-600 px-2 py-1 rounded"
+            placeholder="Search..."
+            className="hidden sm:block bg-utils border text-white border-gray-600 px-2 py-1 rounded text-sm w-32 md:w-40 lg:w-48"
           />
-          <div>
+
+          {/* Search icon for mobile */}
+          <button className="sm:hidden text-white focus:outline-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-gray-400"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+          </button>
+
+          <div className="flex-shrink-0">
             <a href="">
               <img
-                src={avatar}
+                src={avatar || "/placeholder.svg"}
                 alt="Avatar"
-                className="w-[40px] h-[40px] bg-size-cover rounded-[3px]"
+                className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] bg-size-cover rounded-[3px]"
               />
             </a>
           </div>
@@ -61,7 +110,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           {/* Hitbox para o Hover */}
           <div
             className="fixed top-[68px] left-0 h-[calc(100vh-68px)] transition-all duration-500 ease-in-out"
-            style={{ width: isSidebarExpanded ? '250px' : '80px' }} // Área maior para hover quando retraída
+            style={{ width: isSidebarExpanded ? "250px" : "80px" }}
           >
             <div
               className="bg-sidebar p-5 h-full border-r border-gray-700 overflow-y-auto transition-all duration-500 ease-in-out sidebar"
@@ -126,26 +175,26 @@ const Layout = ({ children }: { children: ReactNode }) => {
           </div>
 
           <div
-            className={`fixed top-[50%] transform -translate-y-1/2 z-20 transition-opacity duration-500 ease-in-out ${isSidebarExpanded ? 'opacity-0 group-hover:opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-            style={{ left: sidebarWidth, transition: 'left 0.5s' }}
+            className={`fixed top-[50%] transform -translate-y-1/2 z-20 transition-opacity duration-500 ease-in-out ${
+              isSidebarExpanded ? "opacity-0 group-hover:opacity-100" : "opacity-0 group-hover:opacity-100"
+            }`}
+            style={{ left: sidebarWidth, transition: "left 0.5s" }}
           >
-            <button
-              onClick={toggleSidebar}
-              className="text-white focus:outline-none rounded-full"
-            >
+            <button onClick={toggleSidebar} className="text-white focus:outline-none rounded-full">
               <svg
                 aria-hidden="true"
                 focusable="false"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 className="w-4 h-4 text-gray-400 hover:text-white transition-colors"
-                style={{ transform: isSidebarExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                style={{ transform: isSidebarExpanded ? "rotate(180deg)" : "rotate(0deg)" }}
               >
                 <path fill="currentColor" d="M8 4l8 8-8 8"></path>
               </svg>
             </button>
           </div>
         </div>
+
         {/* Menu mobile */}
         {isMobileMenuOpen && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex sm:hidden">
@@ -154,11 +203,33 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 className="self-end mb-6 text-gray-400 hover:text-white"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-7 w-7"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-              <TemporadaAtual />
+
+              {/* Navigation links in mobile menu */}
+              <div className="mb-6 space-y-4">
+                <a href="/" className="block text-white hover:text-gray-300 py-2">
+                  Home
+                </a>
+                <a href="#" className="block text-white hover:text-gray-300 line-through py-2">
+                  Animelist
+                </a>
+                <a href="#" className="block text-white hover:text-gray-300 line-through py-2">
+                  Comunity
+                </a>
+                <a href="#" className="block text-white hover:text-gray-300 line-through py-2">
+                  Perfil
+                </a>
+              </div>
+
               <div className="relative mb-6 mt-4">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                   <svg
@@ -213,16 +284,26 @@ const Layout = ({ children }: { children: ReactNode }) => {
             <div className="flex-1" onClick={() => setIsMobileMenuOpen(false)} />
           </div>
         )}
+
         {/* Conteúdo principal ocupa toda a tela no mobile */}
         <div
-          className="flex-1 p-6 transition-all duration-500 ease-in-out"
-          style={{ marginLeft: (window.innerWidth >= 640) ? mainMarginLeft : 0 }}
+          className={`flex-1 p-6 transition-all duration-500 ease-in-out ${
+            // Em mobile (sm:hidden) não tem margem
+            // Em desktop, margem baseada no estado da sidebar
+            isSidebarExpanded ? "sm:ml-[280px]" : "sm:ml-[90px]"
+          }`}
         >
-          <main className="w-full mx-auto transition-all duration-500 ease-in-out" style={{ maxWidth: isSidebarExpanded ? '1200px' : '1400px' }}>{children}</main>
+          <main
+            className={`w-full mx-auto transition-all duration-500 ease-in-out ${
+              isSidebarExpanded ? "max-w-[1200px]" : "max-w-[1600px]"
+            }`}
+          >
+            {children}
+          </main>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Layout;
+export default ClientLayout
