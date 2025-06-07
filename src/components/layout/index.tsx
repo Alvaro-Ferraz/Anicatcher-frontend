@@ -12,7 +12,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   };
 
   const sidebarWidth = isSidebarExpanded ? '250px' : '60px';
-  const mainMarginLeft = isSidebarExpanded ? '280px' : '90px'; // Ajustado para incluir espaço do botão
+  const mainMarginLeft = isSidebarExpanded ? '280px' : '90px';
 
   return (
     <div className="bg-body min-h-screen text-white">
@@ -117,14 +117,13 @@ const Layout = ({ children }: { children: ReactNode }) => {
           </div>
 
           <div
-            className={`fixed top-[50%] transform -translate-y-1/2 z-20 transition-opacity duration-500 ease-in-out ${
-              isSidebarExpanded ? 'opacity-0 group-hover:opacity-100' : 'opacity-0 group-hover:opacity-100'
-            }`}
-            style={{ left: isSidebarExpanded ? '250px' : '60px' }}
+            className={`fixed top-[50%] transform -translate-y-1/2 z-20 transition-opacity duration-500 ease-in-out ${isSidebarExpanded ? 'opacity-0 group-hover:opacity-100' : 'opacity-0 group-hover:opacity-100'
+              }`}
+            style={{ left: sidebarWidth, transition: 'left 0.5s' }}
           >
             <button
               onClick={toggleSidebar}
-              className=" text-white focus:outline-none rounded-full"
+              className="text-white focus:outline-none rounded-full"
             >
               <svg
                 aria-hidden="true"
