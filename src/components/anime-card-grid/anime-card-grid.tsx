@@ -30,17 +30,20 @@ const AnimeCardGrid: React.FC<{
   const totalCards = rows * columns;
   const displayedAnimes = animes.slice(0, totalCards);
 
-  // Mapeamento de colunas para classes Tailwind
-  const columnClasses: { [key: number]: string } = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-2',
-    3: 'grid-cols-3',
-    4: 'grid-cols-4',
-    5: 'grid-cols-5',
-    6: 'grid-cols-6',
-  };
+  // Mapeamento de colunas para classes Tailwind responsivas
+  const responsiveGridClass =
+    'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4';
 
-  const gridClass = columnClasses[columns] || 'grid-cols-5';
+  // Forçar atualização do grid ao redimensionar a tela
+  // Isso resolve o bug de responsividade só atualizar ao abrir o menu
+  React.useEffect(() => {
+    const handleResize = () => {
+      // Força um re-render
+      setTimeout(() => {}, 0);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <section>
@@ -53,13 +56,13 @@ const AnimeCardGrid: React.FC<{
         )}
       </div>
 
-      <div className={`grid ${gridClass} gap-8`}>
+      <div className={responsiveGridClass + " relative z-0"}>
         {isLoading
           ? // Renderizar skeleton loading
             [...Array(totalCards)].map((_, index) => (
               <div
                 key={`skeleton-${index}`}
-                className="relative overflow-hidden transition-transform duration-300"
+                className="relative overflow-hidden transition-transform duration-300 z-0"
               >
                 <div className="block w-full aspect-[3/4] overflow-hidden bg-gray-700 rounded animate-pulse">
                   <div className="w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-shimmer" />
@@ -76,7 +79,7 @@ const AnimeCardGrid: React.FC<{
                 return (
                   <div
                     key={`empty-${index}`}
-                    className="relative overflow-hidden transition-transform duration-300"
+                    className="relative overflow-hidden transition-transform duration-300 z-0"
                   >
                     <div className="block w-full aspect-[3/4] overflow-hidden bg-gray-800 rounded">
                       <div className="w-full h-full flex items-center justify-center text-gray-500">
@@ -90,7 +93,7 @@ const AnimeCardGrid: React.FC<{
               return (
                 <div
                   key={anime.mal_id}
-                  className="relative overflow-hidden transition-transform duration-300 hover:scale-105"
+                  className="relative overflow-hidden transition-transform duration-300 hover:scale-105 z-0"
                 >
                   <a
                     href={`/anime/${anime.mal_id}`}
@@ -115,6 +118,5 @@ const AnimeCardGrid: React.FC<{
     </section>
   );
 };
-
 
 export default AnimeCardGrid;

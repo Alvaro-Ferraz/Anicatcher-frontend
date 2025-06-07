@@ -129,7 +129,7 @@ export const Home = () => {
       <AnimeCardGrid
         title="Popular this season"
         animes={seasonAnimes}
-        columns={5}
+        columns={6}
         rows={2}
         showViewAll={true}
         viewAllLink="#"
@@ -140,7 +140,7 @@ export const Home = () => {
       <AnimeCardGrid
         title="Upcoming next season"
         animes={nextSeason}
-        columns={5}
+        columns={6}
         rows={1}
         showViewAll={true}
         viewAllLink="#"
@@ -155,7 +155,7 @@ export const Home = () => {
         <AnimeCardGrid
           title={selectedGenre}
           animes={filteredAnimes}
-          columns={5}
+          columns={6}
           rows={2}
           showViewAll={true}
           viewAllLink="#"
