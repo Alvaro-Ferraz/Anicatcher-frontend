@@ -66,14 +66,14 @@ export default function AnimeRecommendations({ recommendations }: Props) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="relative overflow-hidden rounded transition-transform duration-300 hover:scale-105">
+                <div className="relative overflow-hidden transition-transform duration-300 hover:scale-105">
                   <img
                     src={rec.entry.images?.webp?.large_image_url || "/placeholder.svg?height=128&width=96"}
                     alt={rec.entry.title}
                     className="w-full h-36 object-cover rounded"
                   />
                 </div>
-                <p className="mt-1 text-[#ADC0D2] text-xs font-medium line-clamp-2 leading-tight">
+                <p className="mt-2 text-[#ADC0D2] text-xs font-medium line-clamp-2 leading-tight">
                   {rec.entry.title}
                 </p>
               </motion.a>

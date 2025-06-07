@@ -69,7 +69,6 @@ const AnimeDetails = () => {
 
   const handleAddToList = () => {
     // Lógica para adicionar à lista (pode ser um modal ou integração com backend)
-    alert('Anime adicionado à sua lista!');
   };
 
   const formatDate = (dateString?: string) => {
@@ -109,33 +108,34 @@ const AnimeDetails = () => {
 
   return (
     <Layout>
-      <div className="mt-10">
+      <div className="mt-10 w-full px-2">
         {/* Primeira Parte: Imagem, Título, Sinopse e Abas */}
-        <div className="mt-6 flex gap-6">
+        <div className="mt-6 flex flex-col md:flex-row gap-6 w-full">
           {/* Imagem de Capa */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex flex-col items-center md:block">
             <img
               src={anime.images?.jpg?.large_image_url || 'https://via.placeholder.com/200x300'}
               alt={anime.title}
-              className="w-[250px] h-[370px]"
+              className="w-[180px] h-[260px] md:w-[250px] md:h-[370px] rounded"
             />
             {/* Botões */}
-            <div className="mt-4 flex gap-4">
+            <div className="mt-2 flex gap-2 w-[180px] md:w-[250px]">
               <button
                 onClick={handleAddToList}
-                className="flex items-center w-full gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                className="flex items-center justify-center flex-1 bg-blue-500 text-white h-8 rounded-lg hover:bg-blue-600 transition-colors text-xs font-medium"
               >
-                <span className='flex-1 justify-center'>Add to List</span>
+                Add to List
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
+                  width="14"
+                  height="14"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  className="ml-1"
                 >
                   <path d="M12 5v14" />
                   <path d="M5 12h14" />
@@ -143,12 +143,12 @@ const AnimeDetails = () => {
               </button>
               <button
                 onClick={handleFavoriteToggle}
-                className="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                className="flex items-center justify-center w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
+                  width="14"
+                  height="14"
                   viewBox="0 0 24 24"
                   fill={isFavorite ? 'red' : 'none'}
                   stroke={isFavorite ? 'red' : 'currentColor'}
@@ -163,48 +163,34 @@ const AnimeDetails = () => {
           </div>
 
           {/* Título e Sinopse */}
-          <div className="flex-1">
-            <h1 className="text-3xl font-medium text-gray-200 mb-2">{anime.title}</h1>
+          <div className="flex-1 w-full text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-medium text-gray-200 mb-2">{anime.title}</h1>
             <p className="text-sm text-gray-500 mb-4">
               {anime.year || 'Ano desconhecido'} •{' '}
               {anime.genres?.map((g: any) => g.name).join(', ') || 'Gêneros desconhecidos'} •{' '}
               {anime.episodes || 'N/A'} episódios
             </p>
-            <p className="text-gray-400 hover:text-gray-300">{anime.synopsis || 'Sinopse não disponível.'}</p>
+            <p className="text-gray-400 hover:text-gray-300 md:text-left">{anime.synopsis || 'Sinopse não disponível.'}</p>
           </div>
         </div>
 
         {/* Abas de Navegação */}
-        <div className="mt-6 border-b border-gray-700">
-          <div className="flex gap-8 border-gray-700 justify-center">
-            <a href="#" className="pb-2 text-white border-b-2 border-blue-500">
-              Overview
-            </a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white">
-              Watch
-            </a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white">
-              Characters
-            </a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white">
-              Staff
-            </a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white">
-              Reviews
-            </a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white">
-              Stats
-            </a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white">
-              Social
-            </a>
+        <div className="mt-6 border-b border-gray-700 w-full overflow-x-auto">
+          <div className="flex gap-4 md:gap-8 border-gray-700 justify-center w-full min-w-[400px]">
+            <a href="#" className="pb-2 text-white border-b-2 border-blue-500">Overview</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Watch</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Characters</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Staff</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Reviews</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Stats</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Social</a>
           </div>
         </div>
 
         {/* Seção de Informações Abaixo */}
-        <div className="mt-6 flex gap-6">
+        <div className="mt-6 flex flex-col md:flex-row gap-6 w-full">
           {/* Coluna de Informações à Esquerda */}
-          <div className="w-[240px] text-gray-400 bg-[#151F2E] p-5">
+          <div className="w-full md:w-[240px] text-gray-400 bg-[#151F2E] p-5 rounded mb-4 md:mb-0 min-w-0">
             {/* Informações do Anime */}
             {/*Colocar ranking*/}
             {[
@@ -235,10 +221,10 @@ const AnimeDetails = () => {
           </div>
 
           {/* Espaço à Direita (para conteúdo futuro das abas) */}
-          <div className="flex-1">            {/* Seção de Personagens */}
-            <div className="flex-1 p-5">
+          <div className="flex-1 w-full min-w-0">            {/* Seção de Personagens */}
+            <div className="flex-1 p-0 md:p-5 min-w-0">
               <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Characters</h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {characters.slice(0, 6).map((char) => (
                   <div
                     key={char.character.mal_id}
@@ -252,7 +238,6 @@ const AnimeDetails = () => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-
                     {/* Nome e papel do personagem */}
                     <div className="flex-1 flex flex-col justify-between text-left pl-2 py-2 min-h-full">
                       <p className="font-semibold text-gray-300 text-[13px] leading-tight">
@@ -260,11 +245,10 @@ const AnimeDetails = () => {
                       </p>
                       <p className="text-gray-400 text-[11px]">{char.role}</p>
                     </div>
-
                     {/* Seiyuu - imagem à direita e info à esquerda dela */}
                     {char.voice_actors?.length > 0 && (
-                      <div className="flex h-full">
-                        <div className="flex flex-col justify-between text-right pr-2 py-2 min-h-full">
+                      <div className="hidden md:flex h-full">
+                        <div className="flex flex-col justify-between text-right px-2 pr-2 py-2 min-h-full">
                           <p className="text-gray-300 text-[13px] leading-tight">
                             {char.voice_actors[0].person.name}
                           </p>
@@ -286,7 +270,7 @@ const AnimeDetails = () => {
               </div>
               {/* Staff Section */}
               <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2 mt-4">Staff</h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {staff.slice(0, 3).map((member) => (
                   <div
                     key={member.person.mal_id}
