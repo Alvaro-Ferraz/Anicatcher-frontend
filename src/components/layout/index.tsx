@@ -169,9 +169,8 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
           </div>
 
           <div
-            className={`fixed top-[50%] transform -translate-y-1/2 z-20 transition-opacity duration-500 ease-in-out ${
-              isSidebarExpanded ? "opacity-0 group-hover:opacity-100" : "opacity-0 group-hover:opacity-100"
-            }`}
+            className={`fixed top-[50%] transform -translate-y-1/2 z-20 transition-opacity duration-500 ease-in-out ${isSidebarExpanded ? "opacity-0 group-hover:opacity-100" : "opacity-0 group-hover:opacity-100"
+              }`}
             style={{ left: sidebarWidth, transition: "left 0.5s" }}
           >
             <button onClick={toggleSidebar} className="text-white focus:outline-none rounded-full">
@@ -281,8 +280,8 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
 
         {/* Conteúdo principal ocupa toda a tela no mobile */}
         <div
-          className="flex-1 px-2 sm:px-6 transition-all duration-500 ease-in-out ml-0 sm:ml-[50px] sm:data-[expanded=true]:ml-[280px]"
-          data-expanded={isSidebarExpanded}
+          className={`flex-1 px-2 sm:px-6 transition-all duration-500 ease-in-out ${isSidebarExpanded ? 'sm:ml-[250px]' : 'sm:ml-[80px]'
+            }`}
         >
           <main
             className="w-full mx-auto transition-all duration-500 ease-in-out max-w-[1400px] sm:data-[expanded=true]:max-w-[1200px]"

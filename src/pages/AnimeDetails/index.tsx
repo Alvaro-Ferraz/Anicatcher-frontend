@@ -107,7 +107,7 @@ const AnimeDetails = () => {
   }
   return (
     <Layout>
-      <div className="mt-16 mb-4 md:mt-20 w-full px-2">
+      <div className="mt-16 mb-4 md:mt-20 w-full px-2 sm:px-4">
         {/* Primeira Parte: Imagem, Título, Sinopse e Abas */}
         <div className="mt-2 flex flex-col md:flex-row gap-6 w-full">
           {/* Imagem de Capa */}
@@ -220,7 +220,8 @@ const AnimeDetails = () => {
           </div>
 
           {/* Espaço à Direita (para conteúdo futuro das abas) */}
-          <div className="flex-1 w-full min-w-0">            {/* Seção de Personagens */}
+          <div className="flex-1 w-full min-w-0">            
+            {/* Seção de Personagens */}
             <div className="flex-1 p-0 md:p-5 min-w-0">
               <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Characters</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
