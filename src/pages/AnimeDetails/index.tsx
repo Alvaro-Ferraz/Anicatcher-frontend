@@ -107,9 +107,9 @@ const AnimeDetails = () => {
   }
   return (
     <Layout>
-      <div className="mt-4 md:mt-6 w-full px-2 sm:px-4">
+      <div className="mt-16 mb-4 md:mt-20 w-full px-2 sm:px-4">
         {/* Primeira Parte: Imagem, Título, Sinopse e Abas */}
-        <div className="mt-6 flex flex-col md:flex-row gap-6 w-full">
+        <div className="mt-2 flex flex-col md:flex-row gap-6 w-full">
           {/* Imagem de Capa */}
           <div className="flex-shrink-0 flex flex-col items-center md:block">
             <img
