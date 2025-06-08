@@ -1,6 +1,6 @@
 import AnimeGenres from '../../components/anime-genres-filter/anime-genres-filter';
 import AnimeCardGrid from '../../components/anime-card-grid/anime-card-grid';
-import Layout from '../../components/layout/index';
+import ClientLayout from '../../components/layout/index';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -101,7 +101,7 @@ export const Home = () => {
   };
 
   return (
-    <Layout>
+    <ClientLayout>
       {/* Hero Banner */}
       <div className="grid grid-cols-4 gap-6 mt-10 mb-10">
         {isLoadingPopular ? (
@@ -162,7 +162,7 @@ export const Home = () => {
           isLoading={isLoadingFiltered}
         />
       </section>
-    </Layout>
+    </ClientLayout>
   );
 };
 
