@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Anime, Episode, Trailer } from './interface';
-import Layout from '../../components/layout/index';
+import ClientLayout from '../../components/layout/index';
 import AnimeStatistics from "../../components/AnimeStatistics/AnimeStatistics";
 import AnimeRecommendations from '../../components/AnimeRecommendations/AnimeRecommendations';
 
@@ -84,29 +84,29 @@ const AnimeDetails = () => {
 
   if (isLoading) {
     return (
-      <Layout>
+      <ClientLayout>
         <div className="text-center text-gray-400 mt-10">Carregando...</div>
-      </Layout>
+      </ClientLayout>
     );
   }
 
   if (error) {
     return (
-      <Layout>
+      <ClientLayout>
         <div className="text-center text-red-400 mt-10">{error}</div>
-      </Layout>
+      </ClientLayout>
     );
   }
 
   if (!anime) {
     return (
-      <Layout>
+      <ClientLayout>
         <div className="text-center text-gray-400 mt-10">Anime não encontrado.</div>
-      </Layout>
+      </ClientLayout>
     );
   }
   return (
-    <Layout>
+    <ClientLayout>
       <div className="mt-16 mb-4 md:mt-20 w-full px-2 sm:px-4">
         {/* Primeira Parte: Imagem, Título, Sinopse e Abas */}
         <div className="mt-2 flex flex-col md:flex-row gap-6 w-full">
@@ -347,7 +347,7 @@ const AnimeDetails = () => {
           </div>
         </div>
       </div>
-    </Layout >
+    </ClientLayout >
   );
 };
 
