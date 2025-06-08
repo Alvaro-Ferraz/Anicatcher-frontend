@@ -37,9 +37,3 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
-
-@media (max-width: 640px) {
-  .flex-1 {
-    margin-left: 0 !important;
-  }
-}
