@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 interface AnimeGenresProps {
@@ -8,23 +8,35 @@ interface AnimeGenresProps {
 
 const AnimeGenres: React.FC<AnimeGenresProps> = ({ genres, onGenreSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedGenre, setSelectedGenre] = useState<{ mal_id: number; name: string } | null>(null); // Estado para o gênero selecionado
+  const [selectedGenre, setSelectedGenre] = useState<{ mal_id: number; name: string } | null>(null);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  // Função para alternar o dropdown sem preventDefault
+  const toggleDropdown = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation(); // Mantém apenas stopPropagation para evitar propagação
+    setIsOpen((prev) => !prev);
+  }, []);
 
   const handleGenreClick = (genre: { mal_id: number; name: string }) => {
-    setSelectedGenre(genre); // Atualiza o gênero selecionado
-    onGenreSelect(genre); // Chama a função de callback
-    setIsOpen(false); // Fecha o dropdown
+    setSelectedGenre(genre);
+    onGenreSelect(genre);
+    setIsOpen(false);
   };
 
+  // Fechar o dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = () => setIsOpen(false);
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative px-5 sm:px-5">
       <button
-        className="flex items-center bg-utils text-gray-400 px-4 py-2 rounded"
+        className="flex items-center bg-utils text-gray-400 px-4 py-2 rounded w-full sm:w-auto"
         onClick={toggleDropdown}
+        onTouchStart={toggleDropdown} // Remove preventDefault aqui
       >
         {selectedGenre ? selectedGenre.name : 'Filtro de Categorias'}
         <svg
@@ -45,13 +57,14 @@ const AnimeGenres: React.FC<AnimeGenresProps> = ({ genres, onGenreSelect }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute mt-2 w-48 bg-utils border border-gray-600 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto sidebar">
+        <div className="absolute mt-2 w-full sm:w-48 bg-utils border border-gray-600 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
           <ul className="py-1">
             {genres.map((genre) => (
               <li
-                key={genre.mal_id}
+                key={`${genre.mal_id}-${genre.name}`} // Chave única
                 className="px-4 py-2 text-gray-400 hover:bg-gray-700 cursor-pointer"
                 onClick={() => handleGenreClick(genre)}
+                onTouchStart={() => handleGenreClick(genre)}
               >
                 {genre.name}
               </li>

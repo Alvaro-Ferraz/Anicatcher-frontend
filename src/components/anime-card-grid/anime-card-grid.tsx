@@ -36,27 +36,19 @@ const AnimeCardGrid: React.FC<{
 
     // Forçar atualização do grid ao redimensionar a tela
     // Isso resolve o bug de responsividade só atualizar ao abrir o menu
-    React.useEffect(() => {
-      const handleResize = () => {
-        // Força um re-render
-        setTimeout(() => { }, 0);
-      };
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     return (
       <section>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-medium text-[#ADC0D2]">{title}</h2>
+          <h2 className="text-2xl font-medium px-5 sm:px-5 text-[#ADC0D2]">{title}</h2>
           {showViewAll && (
-            <a href={viewAllLink} className="text-sm text-blue-400">
+            <a href={viewAllLink} className="text-sm px-5 sm:px-5 text-blue-400">
               View All
             </a>
           )}
         </div>
 
-        <div className={responsiveGridClass + " relative z-0"}>
+        <div className={responsiveGridClass + " relative z-0 px-5 sm:p-5 overflow-hidden"}>
           {isLoading
             ? // Renderizar skeleton loading
             [...Array(totalCards)].map((_, index) => (
