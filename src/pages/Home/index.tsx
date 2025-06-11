@@ -149,7 +149,7 @@ export const Home = () => {
 
       {/* Seção Filtrada por Gênero */}
       <section className="mt-10">
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex justify-between items-center mb-5 scroll-bar">
           <AnimeGenres genres={genres} onGenreSelect={handleGenreSelect} />
         </div>
         <AnimeCardGrid

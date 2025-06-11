@@ -40,7 +40,7 @@ export default function AnimeRecommendations({ recommendations }: Props) {
   return (
     <section className="mt-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-medium text-[#ADC0D2]">Recommendations</h2>
+        <h2 className="text-[15px] font-medium text-[#ADC0D2]">Recommendations</h2>
         {recommendations.length > initialCards && (
           <button
             onClick={() => setShowAll(!showAll)}

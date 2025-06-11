@@ -22,43 +22,51 @@ const AnimeDetails = () => {
   const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchAnimeDetails = async () => {
       try {
         setIsLoading(true);
+        while (isMounted) {
+          try {
+            const [animeRes, charactersRes, staffRes, videosRes, recommendationsRes] = await Promise.all([
+              axios.get(`https://api.jikan.moe/v4/anime/${id}`, { timeout: 5000 }),
+              axios.get(`https://api.jikan.moe/v4/anime/${id}/characters`, { timeout: 5000 }),
+              axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`, { timeout: 5000 }),
+              axios.get(`https://api.jikan.moe/v4/anime/${id}/videos`, { timeout: 5000 }),
+              axios.get(`https://api.jikan.moe/v4/anime/${id}/recommendations`, { timeout: 5000 }),
+            ]);
 
-        const [animeRes, charactersRes, staffRes, videosRes, recommendationsRes] = await Promise.all([
-          axios.get(`https://api.jikan.moe/v4/anime/${id}`, { timeout: 5000 }),
-          axios.get(`https://api.jikan.moe/v4/anime/${id}/characters`, { timeout: 5000 }),
-          axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`, { timeout: 5000 }),
-          axios.get(`https://api.jikan.moe/v4/anime/${id}/videos`, { timeout: 5000 }),
-          axios.get(`https://api.jikan.moe/v4/anime/${id}/recommendations`, { timeout: 5000 }),
-        ]);
+            const animeData = animeRes.data.data;
+            const videosData = videosRes.data.data;
 
-        const animeData = animeRes.data.data;
-        const videosData = videosRes.data.data;
-
-        setAnime(animeData);
-        setCharacters(charactersRes.data.data);
-        setStaff(staffRes.data.data);
-        setVideos(videosData.episodes || []);
-        setTrailer(animeData.trailer || null);
-        setRecommendations(recommendationsRes.data.data); // novo estado
-
-        setIsLoading(false);
-      } catch (err: any) {
-        console.error('Erro ao buscar detalhes do anime:', err);
-        if (err.response?.status === 429) {
-          console.log('Rate limit atingido, tentando novamente em 5 segundos...');
-          await delay(5000);
-          fetchAnimeDetails();
-          return;
+            if (!isMounted) return;
+            setAnime(animeData);
+            setCharacters(charactersRes.data.data);
+            setStaff(staffRes.data.data);
+            setVideos(videosData.episodes || []);
+            setTrailer(animeData.trailer || null);
+            setRecommendations(recommendationsRes.data.data);
+            setIsLoading(false);
+            setError(null);
+            break;
+          } catch (err: any) {
+            if (err.response?.status === 429) {
+              // Não exibe erro no console, apenas espera e tenta novamente
+              await delay(5000);
+              continue;
+            }
+            if (!isMounted) return;
+            setError('Não foi possível carregar os detalhes do anime.');
+            setIsLoading(false);
+            break;
+          }
         }
-        setError('Não foi possível carregar os detalhes do anime.');
-        setIsLoading(false);
+      } finally {
+        // nada
       }
     };
-
     fetchAnimeDetails();
+    return () => { isMounted = false; };
   }, [id]);
 
 
@@ -163,7 +171,7 @@ const AnimeDetails = () => {
 
           {/* Título e Sinopse */}
           <div className="flex-1 w-full text-center md:text-left">
-            <h1 className="text-2xl md:text-3xl font-medium text-gray-200 mb-2">{anime.title}</h1>
+            <h1 className="text-2xl md:text-2xl font-medium text-[#9bb5cc] mb-2">{anime.title}</h1>
             <p className="text-sm text-gray-500 mb-4">
               {anime.year || 'Ano desconhecido'} •{' '}
               {anime.genres?.map((g: any) => g.name).join(', ') || 'Gêneros desconhecidos'} •{' '}
@@ -175,14 +183,14 @@ const AnimeDetails = () => {
 
         {/* Abas de Navegação */}
         <div className="mt-6 border-b border-gray-700 w-full overflow-x-auto">
-          <div className="flex gap-4 md:gap-8 border-gray-700 justify-center w-full min-w-[400px]">
-            <a href="#" className="pb-2 text-white border-b-2 border-blue-500">Overview</a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Watch</a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Characters</a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Staff</a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Reviews</a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Stats</a>
-            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through">Social</a>
+          <div className="flex gap-2 sm:gap-4 md:gap-8 border-gray-700 justify-start sm:justify-center w-full">
+            <a href="#" className="pb-2 text-white border-b-2 border-blue-500 whitespace-nowrap">Overview</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through whitespace-nowrap">Watch</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through whitespace-nowrap">Characters</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through whitespace-nowrap">Staff</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through whitespace-nowrap">Reviews</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through whitespace-nowrap">Stats</a>
+            <a href="#" className="pb-2 text-gray-400 hover:text-white line-through whitespace-nowrap">Social</a>
           </div>
         </div>
 
@@ -190,8 +198,6 @@ const AnimeDetails = () => {
         <div className="mt-6 flex flex-col md:flex-row gap-6 w-full">
           {/* Coluna de Informações à Esquerda */}
           <div className="w-full md:w-[240px] text-gray-400 bg-[#151F2E] p-5 rounded mb-4 md:mb-0 min-w-0">
-            {/* Informações do Anime */}
-            {/*Colocar ranking*/}
             {[
               { label: 'Format', value: anime.type },
               { label: 'Episodes', value: anime.episodes },

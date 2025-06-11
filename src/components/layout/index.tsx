@@ -280,7 +280,7 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
 
         {/* Conteúdo principal ocupa toda a tela no mobile */}
         <div
-          className="flex-1 px-2 sm:px-6 transition-all duration-500 ease-in-out ml-0 sm:ml-[50px] sm:data-[expanded=true]:ml-[280px] overflow-x-hidden"
+          className="flex-1 sm:px-6 transition-all duration-500 ease-in-out ml-0 sm:ml-[50px] sm:data-[expanded=true]:ml-[280px] overflow-x-hidden"
           data-expanded={isSidebarExpanded}
         >
           <main
