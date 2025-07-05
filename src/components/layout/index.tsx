@@ -4,6 +4,7 @@ import logo from '../../assets/images/Logo-ani.3.png';
 import avatar from '../../assets/images/avatar.png';
 import TemporadaAtual from '../../components/anime-season/anime-season';
 
+
 const ClientLayout = ({ children }: { children: ReactNode }) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -45,7 +46,7 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
             <a href="/" className="text-sm text-white hover:text-gray-300 whitespace-nowrap">
               Home
             </a>
-            <a href="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
+            <a href="/anime/search" className="text-sm text-white hover:text-gray-300 whitespace-nowrap">
               Animelist
             </a>
             <a href="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">

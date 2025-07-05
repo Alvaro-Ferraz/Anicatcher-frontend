@@ -36,8 +36,8 @@ const AnimeGenres: React.FC<AnimeGenresProps> = ({ genres, onGenreSelect }) => {
       <button
         className="flex items-center bg-utils text-gray-400 px-4 py-2 rounded w-full sm:w-auto"
         onClick={toggleDropdown}
-        onTouchStart={toggleDropdown} // Remove preventDefault aqui
-      >
+        onTouchStart={toggleDropdown} 
+        >
         {selectedGenre ? selectedGenre.name : 'Filtro de Categorias'}
         <svg
           aria-hidden="true"
@@ -61,7 +61,7 @@ const AnimeGenres: React.FC<AnimeGenresProps> = ({ genres, onGenreSelect }) => {
           <ul className="py-1">
             {genres.map((genre) => (
               <li
-                key={`${genre.mal_id}-${genre.name}`} // Chave única
+                key={`${genre.mal_id}-${genre.name}`}
                 className="px-4 py-2 text-gray-400 hover:bg-gray-700 cursor-pointer"
                 onClick={() => handleGenreClick(genre)}
                 onTouchStart={() => handleGenreClick(genre)}
