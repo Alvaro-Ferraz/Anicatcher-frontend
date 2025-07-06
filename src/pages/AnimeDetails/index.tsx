@@ -226,45 +226,40 @@ const AnimeDetails = () => {
           </div>
 
           {/* Espaço à Direita (para conteúdo futuro das abas) */}
-          <div className="flex-1 w-full min-w-0">            
+          <div className="flex-1 w-full min-w-0">
             {/* Seção de Personagens */}
             <div className="flex-1 p-0 md:p-5 min-w-0">
               <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2">Characters</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {characters.slice(0, 6).map((char) => (
-                  <div
-                    key={char.character.mal_id}
-                    className="bg-[#1e2a3a] flex h-[80px] overflow-hidden"
-                  >
+                  <div key={char.character.mal_id} className="bg-[#1e2a3a] flex h-[80px] overflow-hidden">
                     {/* Imagem do personagem - alinhada à esquerda */}
-                    <div className="w-[64px] h-full">
+                    <div className="w-[48px] sm:w-[64px] h-full flex-shrink-0">
                       <img
-                        src={char.character.images?.jpg?.image_url}
+                        src={char.character.images?.jpg?.image_url || "/placeholder.svg"}
                         alt={char.character.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     {/* Nome e papel do personagem */}
-                    <div className="flex-1 flex flex-col justify-between text-left pl-2 py-2 min-h-full">
-                      <p className="font-semibold text-gray-300 text-[13px] leading-tight">
+                    <div className="flex-1 flex flex-col justify-between text-left pl-2 py-2 min-h-full min-w-0">
+                      <p className="font-semibold text-gray-300 text-[11px] sm:text-[13px] leading-tight truncate">
                         {char.character.name}
                       </p>
-                      <p className="text-gray-400 text-[11px]">{char.role}</p>
+                      <p className="text-gray-400 text-[10px] sm:text-[11px]">{char.role}</p>
                     </div>
                     {/* Seiyuu - imagem à direita e info à esquerda dela */}
                     {char.voice_actors?.length > 0 && (
-                      <div className="hidden md:flex h-full">
-                        <div className="flex flex-col justify-between text-right px-2 pr-2 py-2 min-h-full">
-                          <p className="text-gray-300 text-[13px] leading-tight">
+                      <div className="flex h-full flex-shrink-0">
+                        <div className="flex flex-col justify-between text-right px-1 sm:px-2 py-2 min-h-full min-w-0">
+                          <p className="text-gray-300 text-[10px] sm:text-[13px] leading-tight truncate">
                             {char.voice_actors[0].person.name}
                           </p>
-                          <p className="text-gray-400 text-[11px]">
-                            {char.voice_actors[0].language}
-                          </p>
+                          <p className="text-gray-400 text-[9px] sm:text-[11px]">{char.voice_actors[0].language}</p>
                         </div>
-                        <div className="w-[64px] h-full">
+                        <div className="w-[48px] sm:w-[64px] h-full flex-shrink-0">
                           <img
-                            src={char.voice_actors[0].person.images.jpg.image_url}
+                            src={char.voice_actors[0].person.images.jpg.image_url || "/placeholder.svg"}
                             alt={char.voice_actors[0].person.name}
                             className="w-full h-full object-cover"
                           />
@@ -274,31 +269,27 @@ const AnimeDetails = () => {
                   </div>
                 ))}
               </div>
+
               {/* Staff Section */}
               <h2 className="text-[13px] font-medium text-[#ADC0D2] mb-2 mt-4">Staff</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {staff.slice(0, 3).map((member) => (
-                  <div
-                    key={member.person.mal_id}
-                    className="bg-[#1e2a3a] flex h-[80px] overflow-hidden"
-                  >
+                  <div key={member.person.mal_id} className="bg-[#1e2a3a] flex h-[80px] overflow-hidden">
                     {/* Imagem do Staff à esquerda */}
-                    <div className="w-[64px] h-full">
+                    <div className="w-[48px] sm:w-[64px] h-full flex-shrink-0">
                       <img
-                        src={member.person.images?.jpg?.image_url}
+                        src={member.person.images?.jpg?.image_url || "/placeholder.svg"}
                         alt={member.person.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
 
                     {/* Nome e posição */}
-                    <div className="flex-1 flex flex-col justify-between px-2 py-2 text-sm text-white">
-                      <p className="font-semibold text-gray-300 text-[13px] leading-tight">
+                    <div className="flex-1 flex flex-col justify-between px-2 py-2 text-sm text-white min-w-0">
+                      <p className="font-semibold text-gray-300 text-[11px] sm:text-[13px] leading-tight truncate">
                         {member.person.name}
                       </p>
-                      <p className="text-gray-400 text-[11px]">
-                        {member.positions.join(", ")}
-                      </p>
+                      <p className="text-gray-400 text-[10px] sm:text-[11px] truncate">{member.positions.join(", ")}</p>
                     </div>
                   </div>
                 ))}
