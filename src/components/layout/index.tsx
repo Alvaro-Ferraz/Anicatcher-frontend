@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import logo from '../../assets/images/Logo-ani.3.png';
 import avatar from '../../assets/images/avatar.png';
 import TemporadaAtual from '../../components/anime-season/anime-season';
+import { Link } from "react-router-dom";
 
 
 const ClientLayout = ({ children }: { children: ReactNode }) => {
@@ -43,18 +44,18 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
 
           {/* Navigation - Hidden on mobile, visible on larger screens */}
           <div className="hidden md:flex space-x-4 lg:space-x-6 min-w-0">
-            <a href="/" className="text-sm text-white hover:text-gray-300 whitespace-nowrap">
+            <Link to="/" className="text-sm text-white hover:text-gray-300 whitespace-nowrap">
               Home
-            </a>
-            <a href="/anime/search" className="text-sm text-white hover:text-gray-300 whitespace-nowrap">
+            </Link>
+            <Link to="/anime/search" className="text-sm text-white hover:text-gray-300 whitespace-nowrap">
               Animelist
-            </a>
-            <a href="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
+            </Link>
+            <Link to="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
               Comunity
-            </a>
-            <a href="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
+            </Link>
+            <Link to="#" className="text-sm text-white hover:text-gray-300 line-through whitespace-nowrap">
               Perfil
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -87,13 +88,13 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
           </button>
 
           <div className="flex-shrink-0">
-            <a href="">
+            <Link to="">
               <img
                 src={avatar || "/placeholder.svg"}
                 alt="Avatar"
                 className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] bg-size-cover rounded-[3px]"
               />
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -210,18 +211,18 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
 
               {/* Navigation links in mobile menu */}
               <div className="mb-6 space-y-4">
-                <a href="/" className="block text-white hover:text-gray-300 py-2">
+                <Link to="/" className="block text-white hover:text-gray-300 py-2">
                   Home
-                </a>
-                <a href="#" className="block text-white hover:text-gray-300 line-through py-2">
+                </Link>
+                <Link to="#" className="block text-white hover:text-gray-300 line-through py-2">
                   Animelist
-                </a>
-                <a href="#" className="block text-white hover:text-gray-300 line-through py-2">
+                </Link>
+                <Link to="#" className="block text-white hover:text-gray-300 line-through py-2">
                   Comunity
-                </a>
-                <a href="#" className="block text-white hover:text-gray-300 line-through py-2">
+                </Link>
+                <Link to="#" className="block text-white hover:text-gray-300 line-through py-2">
                   Perfil
-                </a>
+                </Link>
               </div>
 
               <div className="relative mb-6 mt-4">

@@ -33,9 +33,15 @@ body {
   }
 }
 
-.animate-shimmer {
+.skeleton {
+  background: linear-gradient(90deg, #374151 0%, #4b5563 50%, #374151 100%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 1.2s linear infinite;
+  border-radius: 0.375rem;
+}
+
+.skeleton-circle {
+  border-radius: 9999px;
 }
 
 @media (max-width: 640px) {
