@@ -243,7 +243,7 @@ const AnimeDetails = () => {
                     </div>
                     {/* Nome e papel do personagem */}
                     <div className="flex-1 flex flex-col justify-between text-left pl-2 py-2 min-h-full min-w-0">
-                      <p className="font-semibold text-gray-300 text-[11px] sm:text-[13px] leading-tight truncate">
+                      <p className="font-semibold text-gray-300 text-[11px] sm:text-[13px] leading-tight whitespace-normal max-w-[110px] sm:max-w-full">
                         {char.character.name}
                       </p>
                       <p className="text-gray-400 text-[10px] sm:text-[11px]">{char.role}</p>
@@ -252,8 +252,8 @@ const AnimeDetails = () => {
                     {char.voice_actors?.length > 0 && (
                       <div className="flex h-full flex-shrink-0">
                         <div className="flex flex-col justify-between text-right px-1 sm:px-2 py-2 min-h-full min-w-0">
-                          <p className="text-gray-300 text-[10px] sm:text-[13px] leading-tight truncate">
-                            {char.voice_actors[0].person.name}
+                          <p className="text-gray-300 text-[10px] sm:text-[13px] leading-tight whitespace-pre-line break-words max-w-[90px] sm:max-w-full">
+                            {char.voice_actors[0].person.name.split(',').join(',\n')}
                           </p>
                           <p className="text-gray-400 text-[9px] sm:text-[11px]">{char.voice_actors[0].language}</p>
                         </div>
