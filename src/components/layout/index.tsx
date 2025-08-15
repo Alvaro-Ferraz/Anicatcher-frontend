@@ -214,7 +214,7 @@ const ClientLayout = ({ children }: { children: ReactNode }) => {
                 <Link to="/" className="block text-white hover:text-gray-300 py-2">
                   Home
                 </Link>
-                <Link to="#" className="block text-white hover:text-gray-300 line-through py-2">
+                <Link to="/anime/search" className="block text-white hover:text-gray-300 py-2">
                   Animelist
                 </Link>
                 <Link to="#" className="block text-white hover:text-gray-300 line-through py-2">
