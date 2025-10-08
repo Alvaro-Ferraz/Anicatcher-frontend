@@ -10,11 +10,11 @@ export const App = () => {
             element: <Home />
         },
         {
-            path: '/anime/:id', // Nova rota com parâmetro mal_id
+            path: '/anime/:id', 
             element: <AnimeDetails />
         },
         {
-            path: '/anime/search', // Rota para pesquisa de animes
+            path: '/anime/search',
             element: <AnimeSearchPage />
         }
     ]);

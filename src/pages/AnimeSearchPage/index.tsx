@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import ClientLayout from '../../components/layout';
 import axios from 'axios';
-import AnimeCardGrid from '../../components/anime-card-grid/anime-card-grid';
-import AnimeSearchFilter from '../../components/search-anime-filter';
+import AnimeCardGrid from '../../components/AnimeCardGrid';
+import AnimeSearchFilter from '../../components/SearchAnimeFilter';
 import { useSearchParams } from 'react-router-dom';
 
 export default function AnimeSearchPage() {

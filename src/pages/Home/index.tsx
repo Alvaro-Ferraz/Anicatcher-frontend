@@ -1,5 +1,5 @@
-import AnimeGenres from '../../components/anime-genres-filter/anime-genres-filter';
-import AnimeCardGrid from '../../components/anime-card-grid/anime-card-grid';
+import AnimeGenres from '../../components/AnimeGenresFilter';
+import AnimeCardGrid from '../../components/AnimeCardGrid';
 import ClientLayout from '../../components/layout/index';
 import axios from 'axios';
 import { useState, useEffect } from 'react';

@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Anime, Episode, Trailer } from './interface';
 import ClientLayout from '../../components/layout/index';
-import AnimeStatistics from "../../components/AnimeStatistics/AnimeStatistics";
-import AnimeRecommendations from '../../components/AnimeRecommendations/AnimeRecommendations';
+import AnimeStatistics from "../../components/AnimeStatistics/index.tsx";
+import AnimeRecommendations from '../../components/AnimeRecommendations/index.tsx';
 
 const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -29,7 +29,7 @@ const AnimeDetails = () => {
         while (isMounted) {
           try {
             const [animeRes, charactersRes, staffRes, videosRes, recommendationsRes] = await Promise.all([
-              axios.get(`https://api.jikan.moe/v4/anime/${id}`, { timeout: 5000 }),
+              axios.get(`https://api.jikan.moe/v4/anime/${id}/full`, { timeout: 5000 }),
               axios.get(`https://api.jikan.moe/v4/anime/${id}/characters`, { timeout: 5000 }),
               axios.get(`https://api.jikan.moe/v4/anime/${id}/staff`, { timeout: 5000 }),
               axios.get(`https://api.jikan.moe/v4/anime/${id}/videos`, { timeout: 5000 }),
@@ -211,12 +211,24 @@ const AnimeDetails = () => {
               { label: 'Favorites', value: anime.favorites },
               { label: 'Studios', value: anime.studios?.map((s) => s.name).join(', ') },
               { label: 'Producers', value: anime.producers?.map((p) => p.name).join(', ') },
+              { label: 'Licensors', value: anime.licensors?.map((l) => l.name).join(', ') || 'N/A' },
               { label: 'Source', value: anime.source },
               { label: 'Genres', value: anime.genres?.map((g) => g.name).join(', ') },
               { label: 'Romaji', value: anime.title },
               { label: 'English', value: anime.title_english },
               { label: 'Native', value: anime.title_japanese },
               { label: 'Synonyms', value: anime.title_synonyms?.join(', ') },
+              { label: 'Streaming', value: anime.streaming?.map((s) => (
+                <a
+                  key={s.url}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400"
+                >
+                  {s.name} <br />
+                </a>
+              )) || 'N/A' },
             ].map(({ label, value }) => (
               <div className="mb-3" key={label}>
                 <p className="text-[14px] font-bold text-[#9FADBD]">{label}</p>

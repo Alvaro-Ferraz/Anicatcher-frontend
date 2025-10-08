@@ -2,7 +2,7 @@ import { useState } from "react"
 import type { ReactNode } from "react"
 import logo from '../../assets/images/Logo-ani.3.png';
 import avatar from '../../assets/images/avatar.png';
-import TemporadaAtual from '../../components/anime-season/anime-season';
+import TemporadaAtual from '../AnimeSeason';
 import { Link } from "react-router-dom";
 
 

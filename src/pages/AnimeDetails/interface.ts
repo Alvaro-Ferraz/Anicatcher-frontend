@@ -45,9 +45,11 @@ export interface Anime {
     popularity?: number;
     members?: number;
     favorites?: number;
+    licensors?: { name: string }[];
     studios?: { name: string }[];
     producers?: { name: string }[];
     source?: string;
+    streaming?: { name: string; url: string }[];
 }
 export interface Episode {
     mal_id: number;
